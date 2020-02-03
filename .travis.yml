@@ -1,0 +1,16 @@
+language: python
+python:
+  - "3.6"
+
+services:
+  - mysql
+
+# install dependencies
+before_install:
+  - sudo mysql -e 'CREATE DATABASE test DEFAULT CHARSET utf8 COLLATE utf8_general_ci;'
+  - sudo mysql -e 'CREATE DATABASE netease DEFAULT CHARSET utf8 COLLATE utf8_general_ci;'
+
+install:
+  - pip install -r requirements.txt
+script:
+  - python -m unittest test.test_curd
