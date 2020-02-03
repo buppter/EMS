@@ -1,4 +1,4 @@
-from .models import db
+from .base import db
 
 
 def init_app(app):
