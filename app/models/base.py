@@ -2,9 +2,6 @@ from flask_sqlalchemy import SQLAlchemy, BaseQuery
 from sqlalchemy import Column, TIMESTAMP, text
 from werkzeug.exceptions import abort
 
-from app.libs.helper import simple_select
-from conf.secure import PER_PAGE_NUM
-
 
 class Query(BaseQuery):
 
