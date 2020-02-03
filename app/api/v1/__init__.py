@@ -1,5 +1,5 @@
 from .employee import emp_bp
-from .organization import org_bp
+from .org import org_bp
 from .auth import auth_bp
 
 
