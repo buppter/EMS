@@ -63,18 +63,28 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 415)
         res = res.json
         self.assertEqual(res["code"], 415)
+        self.assertTrue("json" in res["msg"])
 
     def test_create_bad_data(self):
         res = self.client.post("/v1/orgs", json={"name": "test"})
         self.assertEqual(res.status_code, 400)
         res = res.json
         self.assertEqual(res["code"], 400)
+        self.assertTrue("不完整" in res["msg"])
 
     def test_create_not_exist_ancestor(self):
         res = self.client.post("/v1/orgs", json={"name": "test", "ancestor": "test"})
         self.assertEqual(res.status_code, 400)
         res = res.json
         self.assertEqual(res["code"], 400)
+        self.assertTrue("不存在" in res['msg'])
+
+    def test_create_exist_org(self):
+        res = self.client.post("v1/orgs", json={"name": "平台开发组", "ancestor": "伏羲实验室"})
+        self.assertEqual(res.status_code, 400)
+        res = res.json
+        self.assertEqual(res["code"], 400)
+        self.assertTrue("已存在" in res["msg"])
 
     def test_create_right_data(self):
         res = self.client.post("/v1/orgs", json={"name": "test", "ancestor": "平台开发组"})
@@ -82,36 +92,44 @@ class MyTestCase(unittest.TestCase):
         res = res.json
         self.assertEqual(res["code"], 201)
         self.assertEqual(res["data"], [])
+        self.assertTrue("created" in res["msg"])
 
     def test_update_no_data(self):
         res = self.client.put("/v1/org/2", json={})
         self.assertEqual(res.status_code, 415)
         self.assertEqual(res.json["code"], 415)
+        self.assertTrue("json" in res.json["msg"])
 
     def test_update_no_exist_ancestor(self):
         res = self.client.put("/v1/org/2", json={"name": "test", "ancestor": "test22"})
         self.assertEqual(res.status_code, 400)
         self.assertEqual(res.json['code'], 400)
+        self.assertTrue("不存在" in res.json["msg"])
 
     def test_update_not_complete_data(self):
         res = self.client.put("/v1/org/2", json={"name": "test"})
         self.assertEqual(res.status_code, 400)
         self.assertEqual(res.json['code'], 400)
+        self.assertTrue("不完整" in res.json["msg"])
 
     def test_update_right_data(self):
         res = self.client.put("/v1/org/2", json={"name": "test2", "ancestor": "web开发组"})
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.json["code"], 200)
+        self.assertTrue("success" in res.json["msg"])
 
     def test_delete_wrong_id(self):
         res = self.client.delete("/v1/org/100")
         self.assertEqual(res.status_code, 404)
         self.assertEqual(res.json["code"], 404)
+        self.assertTrue("not found" in res.json["msg"])
 
     def test_delete_right_id(self):
         res = self.client.delete("/v1/org/3")
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.json["code"], 200)
+        self.assertTrue("success" in res.json["msg"])
+
 
 
 if __name__ == '__main__':
