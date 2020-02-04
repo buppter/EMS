@@ -36,21 +36,13 @@ def get_org(org_id):
         name, ancestor = data_handler(request)
         org.name = name
         org.ancestor = ancestor
-        try:
+        with db.auto_commit():
             db.session.add(org)
-            db.session.commit()
-        except Exception:
-            db.session.rollback()
-            return make_response(code=Code.SERVER_ERROR)
         return make_response()
 
     if request.method == "DELETE":
-        try:
+        with db.auto_commit():
             db.session.delete(org)
-            db.session.commit()
-        except Exception:
-            db.session.rollback()
-            return make_response(code=Code.SERVER_ERROR)
         return make_response()
 
 
@@ -67,12 +59,8 @@ def create_org():
         return make_response(code=Code.BAD_REQUEST, msg="该部门已存在")
 
     new_org = Node(name=name, ancestor=ancestor)
-    try:
+    with db.auto_commit():
         db.session.add(new_org)
-        db.session.commit()
-    except Exception:
-        db.session.rollback()
-        return make_response(code=Code.SERVER_ERROR)
 
     return make_response(code=Code.CREATED)
 

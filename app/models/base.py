@@ -1,6 +1,19 @@
-from flask_sqlalchemy import SQLAlchemy, BaseQuery
+from contextlib import contextmanager
+
+from flask_sqlalchemy import SQLAlchemy as _SQLAlchemy, BaseQuery
 from sqlalchemy import Column, TIMESTAMP, text
 from werkzeug.exceptions import abort
+
+
+class SQLAlchemy(_SQLAlchemy):
+    @contextmanager
+    def auto_commit(self):
+        try:
+            yield
+            self.session.commit()
+        except Exception:
+            db.session.rollback()
+            abort(500)
 
 
 class Query(BaseQuery):
