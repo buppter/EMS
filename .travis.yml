@@ -2,15 +2,22 @@ language: python
 python:
   - "3.6"
 
+notifications:
+  email: false
+
 services:
   - mysql
 
-# install dependencies
 before_install:
   - sudo mysql -e 'CREATE DATABASE test DEFAULT CHARSET utf8 COLLATE utf8_general_ci;'
   - sudo mysql -e 'CREATE DATABASE netease DEFAULT CHARSET utf8 COLLATE utf8_general_ci;'
 
 install:
   - pip install -r requirements.txt
+  - pip install coverage
+
 script:
-  - python -m unittest test.test_curd
+  - coverage run test.test_curd
+
+after_success:
+  - codecov
