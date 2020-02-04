@@ -1,6 +1,7 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, _request_ctx_stack
 
 from app.libs.code import Code
+from app.libs.handler import data_handler
 from app.libs.response import make_response
 from app.models import db
 from app.models.organization import Node
@@ -17,45 +18,63 @@ def all_node():
     node = Node.get_root()
     data = node.dumps()
 
-    return make_response(data)
+    return make_response(data=data)
 
 
-@org_bp.route("/org/<int:org_id>", methods=["GET"])
+@org_bp.route("/org/<int:org_id>", methods=["GET", "PUT", "DELETE"])
 def get_org(org_id):
     """
-    获取单个组织
+    获取或更新单个组织
     :param org_id: 部门id
     :return:
     """
     org = Node.query.get_or_404(org_id)
-    return make_response(data=org.to_dict())
+    if request.method == "GET":
+        return make_response(data=org.to_dict())
+
+    if request.method == "PUT":
+        name, ancestor = data_handler(request)
+        org.name = name
+        org.ancestor = ancestor
+        try:
+            db.session.add(org)
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+            return make_response(code=Code.SERVER_ERROR)
+        return make_response()
+
+    if request.method == "DELETE":
+        try:
+            db.session.delete(org)
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+            return make_response(code=Code.SERVER_ERROR)
+        return make_response()
 
 
 @org_bp.route("/orgs", methods=["POST"])
-def post_org():
+def create_org():
     """
     添加部门
-    json格式{"name":"xxx", "ancestor": "xx"}
+    post的数据为json格式
+    示例：{"name":"xxx", "ancestor": "xx"}
     :return:
     """
-    data = request.get_json()
-    if not data:
-        return make_response(data=None, code=Code.BAD_REQUEST)
-    name = data.get("name")
-    ancestor = data.get("ancestor")
-    if not (name and ancestor):
-        return make_response(data=None, code=Code.BAD_REQUEST)
+    name, ancestor = data_handler(request)
+    if Node.query.filter(Node.name == name).first():
+        return make_response(code=Code.BAD_REQUEST, msg="该部门已存在")
 
-    ancestor_node = Node.query.filter(Node.name == ancestor).first_or_400()
-    new_org = Node(name=name, ancestor=ancestor_node)
+    new_org = Node(name=name, ancestor=ancestor)
     try:
         db.session.add(new_org)
         db.session.commit()
-    except Exception as e:
+    except Exception:
         db.session.rollback()
-        return make_response(data=None, code=Code.BAD_REQUEST)
+        return make_response(code=Code.SERVER_ERROR)
 
-    return make_response(data=None, code=Code.CREATED)
+    return make_response(code=Code.CREATED)
 
 
 #
@@ -78,17 +97,23 @@ def post_org():
 #         else:
 #             raise Exception("输入的组织名称不存在")
 #
-#     # all_orgs = OrgRelation.get(filter=[OrgRelation.ancestor_id == root_id, OrgRelation.distance > 0], order_by=OrgRelation.distance)
-#     all_orgs = OrgRelation.get(filter=[OrgRelation.ancestor_id == org_id], order_by=OrgRelation.ancestor_id, page=page,
-#                                per_page=per_page)
-#     print(all_orgs)
 #     return jsonify({"data": "hello world"}), 404
 
 @org_bp.errorhandler(404)
 def error404(e):
-    return make_response(data=None, code=Code.NOT_FOUND)
+    return make_response(code=Code.NOT_FOUND)
 
 
 @org_bp.errorhandler(400)
 def bad_request(e):
-    return make_response(data=None, code=Code.BAD_REQUEST)
+    return make_response(code=Code.BAD_REQUEST, msg=e.description)
+
+
+@org_bp.errorhandler(500)
+def bad_request(e):
+    return make_response(code=Code.SERVER_ERROR)
+
+
+@org_bp.errorhandler(415)
+def bad_request(e):
+    return make_response(code=Code.UNSUPPORTED, msg=e.description)

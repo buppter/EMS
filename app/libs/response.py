@@ -4,19 +4,12 @@ from .code import Code
 
 
 # todo:后边要重构这部分
-def make_response(data=None, code=Code.SUCCESS):
-    data = {
+def make_response(data=None, **kwargs):
+    code = kwargs.pop("code", Code.SUCCESS)
+    msg = kwargs.pop("msg", Code.msg[code])
+    res_data = {
         "code": code,
-        "msg": Code.msg[code],
+        "msg": msg,
         "data": data if data else [],
     }
-    return jsonify(data)
-
-
-def get_code(data):
-    if data is not None:
-        code = Code.SUCCESS
-    else:
-        code = Code.NOT_FOUND
-
-    return code
+    return jsonify(res_data), code

@@ -5,10 +5,10 @@ from werkzeug.exceptions import abort
 
 class Query(BaseQuery):
 
-    def first_or_400(self):
+    def first_or_400(self, description=None):
         rv = self.first()
         if not rv:
-            abort(400)
+            abort(400, description=description)
         return rv
 
 
