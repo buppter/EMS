@@ -56,7 +56,7 @@ class MyTestCase(unittest.TestCase):
         res = res.json
         self.assertEqual(res["code"], 200)
         self.assertIsInstance(res["data"], list)
-        self.assertTrue("descendant" in res["data"][0])
+        self.assertTrue("subs" in res["data"][0])
 
     def test_create_no_data(self):
         res = self.client.post("/v1/orgs", json={})
@@ -129,6 +129,33 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.json["code"], 200)
         self.assertTrue("success" in res.json["msg"])
+
+    def test_get_exist_node_ancestor(self):
+        res = self.client.get("/v1/orgs/ancestor/3")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.json["code"], 200)
+        self.assertTrue("id" in res.json["data"])
+
+    def test_get_not_exist_node_ancestor(self):
+        res = self.client.get("/v1/orgs/ancestor/100")
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(res.json["code"], 404)
+
+    def test_get_exist_node_sub(self):
+        res = self.client.get("/v1/orgs/subs/1")
+        self.assertEqual(res.status_code, 200)
+        self.assertIsInstance(res.json["data"], list)
+
+    def test_get_not_exist_node_sub(self):
+        res = self.client.get("/v1/orgs/subs/100")
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(res.json["code"], 404)
+
+    def test_get_exist_node_sub_with_queries(self):
+        res = self.client.get("/v1/orgs/subs/3?page=1&per_page=1&limit=1&offset=1")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.json["code"], 200)
+        self.assertIsInstance(res.json["data"], list)
 
 
 if __name__ == '__main__':
