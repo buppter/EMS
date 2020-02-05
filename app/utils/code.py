@@ -6,6 +6,7 @@ class Code:
     BAD_REQUEST = 400
     UNSUPPORTED = 415
     SERVER_ERROR = 500
+    NOT_ALLOWED = 405
 
     msg = {
         SUCCESS: "success",
@@ -14,5 +15,6 @@ class Code:
         NOT_FOUND: "not found",
         BAD_REQUEST: "bad request",
         SERVER_ERROR: "server error",
-        UNSUPPORTED: "unsupported media type"
+        UNSUPPORTED: "unsupported media type",
+        NOT_ALLOWED: "method not allowed",
     }
