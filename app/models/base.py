@@ -1,14 +1,30 @@
-from flask_sqlalchemy import SQLAlchemy, BaseQuery
+import logging
+import traceback
+from contextlib import contextmanager
+
+from flask_sqlalchemy import SQLAlchemy as _SQLAlchemy, BaseQuery
 from sqlalchemy import Column, TIMESTAMP, text
 from werkzeug.exceptions import abort
 
 
+class SQLAlchemy(_SQLAlchemy):
+    @contextmanager
+    def auto_commit(self):
+        try:
+            yield
+            self.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            logging.error('insert data into mysql error: %s' % traceback.format_exc(e))
+            abort(500)
+
+
 class Query(BaseQuery):
 
-    def first_or_400(self):
+    def first_or_400(self, description=None):
         rv = self.first()
         if not rv:
-            abort(400)
+            abort(400, description=description)
         return rv
 
 

@@ -44,6 +44,6 @@ class Node(Base):
         data = dict()
         data["id"] = self.id
         data["name"] = self.name
-        data["descendant"] = [c.dumps() for c in self.descendant.values()] if self.descendant else []
+        data["subs"] = [c.dumps() for c in self.descendant.values()] if self.descendant else []
 
         return [data]

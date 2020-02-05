@@ -1,7 +1,11 @@
-from flask import Blueprint, request
+import logging
 
-from app.libs.code import Code
-from app.libs.response import make_response
+from flask import Blueprint, request, abort
+
+from app.utils.code import Code
+from app.utils.handler import data_handler
+from app.utils.response import make_response
+from app.utils.query import select
 from app.models import db
 from app.models.organization import Node
 
@@ -16,79 +20,77 @@ def all_node():
     """
     node = Node.get_root()
     data = node.dumps()
+    logging.info("get all org info: %s" % data)
+    return make_response(data=data)
 
-    return make_response(data)
 
-
-@org_bp.route("/org/<int:org_id>", methods=["GET"])
+@org_bp.route("/orgs/<int:org_id>", methods=["GET", "PUT", "DELETE"])
 def get_org(org_id):
     """
-    获取单个组织
+    获取、更新或删除单个部门组织
     :param org_id: 部门id
     :return:
     """
     org = Node.query.get_or_404(org_id)
-    return make_response(data=org.to_dict())
+    if request.method == "GET":
+        logging.info("get a org info: %s" % org.to_dict())
+        return make_response(data=org.to_dict())
+
+    if request.method == "PUT":
+        name, ancestor = data_handler(request)
+        old_org_info = org
+        org.name = name
+        org.ancestor = ancestor
+        with db.auto_commit():
+            db.session.add(org)
+        logging.info("update a org info: %s, before update the org info: %s" % (org, old_org_info))
+        return make_response()
+
+    if request.method == "DELETE":
+        with db.auto_commit():
+            db.session.delete(org)
+        logging.info("delete a org: %s" % org)
+        return make_response()
 
 
 @org_bp.route("/orgs", methods=["POST"])
-def post_org():
+def create_org():
     """
     添加部门
-    json格式{"name":"xxx", "ancestor": "xx"}
+    post的数据为json格式
+    示例：{"name":"xxx", "ancestor": "xx"}
     :return:
     """
-    data = request.get_json()
-    if not data:
-        return make_response(data=None, code=Code.BAD_REQUEST)
-    name = data.get("name")
-    ancestor = data.get("ancestor")
-    if not (name and ancestor):
-        return make_response(data=None, code=Code.BAD_REQUEST)
+    name, ancestor = data_handler(request)
+    if Node.query.filter(Node.name == name).first():
+        logging.warning(
+            'create a org error: 该部门已存在, the create org info: {"name": %s, ancestor: %s}' % (name, ancestor.name))
+        return make_response(code=Code.BAD_REQUEST, msg="该部门已存在")
 
-    ancestor_node = Node.query.filter(Node.name == ancestor).first_or_400()
-    new_org = Node(name=name, ancestor=ancestor_node)
-    try:
+    new_org = Node(name=name, ancestor=ancestor)
+    with db.auto_commit():
         db.session.add(new_org)
-        db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-        return make_response(data=None, code=Code.BAD_REQUEST)
-
-    return make_response(data=None, code=Code.CREATED)
+    logging.info("create a new org: %s" % new_org.to_dict())
+    return make_response(code=Code.CREATED)
 
 
-#
-# @org_bp.route("/orgs/<int:id>")
-# def node(id):
-#     page = request.args.get("page", 0)
-#     per_page = request.args.get("per_page", 0)
-#     limit = request.args.get("limit", 0)
-#     offset = request.args.get("offset", 0)
-#     order_by = request.args.get("order_by", None)
-#     org = request.args.get("org", None)
-#
-#     org_id = Organization.root()
-#     if org is not None:
-#         org = Organization.get(filter=[Organization.name == org], first=True)
-#         # root = simple_select(table_class=OrgRelation, order_by=OrgRelation.distance.desc(), first=True)
-#
-#         if org:
-#             org_id = org.id
-#         else:
-#             raise Exception("输入的组织名称不存在")
-#
-#     # all_orgs = OrgRelation.get(filter=[OrgRelation.ancestor_id == root_id, OrgRelation.distance > 0], order_by=OrgRelation.distance)
-#     all_orgs = OrgRelation.get(filter=[OrgRelation.ancestor_id == org_id], order_by=OrgRelation.ancestor_id, page=page,
-#                                per_page=per_page)
-#     print(all_orgs)
-#     return jsonify({"data": "hello world"}), 404
-
-@org_bp.errorhandler(404)
-def error404(e):
-    return make_response(data=None, code=Code.NOT_FOUND)
+@org_bp.route("/orgs/ancestor/<int:org_id>", methods=["GET"])
+def get_ancestor(org_id):
+    org = Node.query.get_or_404(org_id)
+    org_ancestor = Node.query.get_or_404(org.ancestor_id)
+    logging.info("get the org: %s, its ancestor is: %s" % (org.to_dict(), org_ancestor.to_dict()))
+    return make_response(data=org_ancestor.to_dict())
 
 
-@org_bp.errorhandler(400)
-def bad_request(e):
-    return make_response(data=None, code=Code.BAD_REQUEST)
+@org_bp.route("/orgs/subs/<int:org_id>", methods=["GET"])
+def get_descendant(org_id):
+    page = request.args.get("page", 0)
+    per_page = request.args.get("per_page", 0)
+    limit = request.args.get("limit", 0)
+    offset = request.args.get("offset", 0)
+    org = Node.query.get_or_404(org_id)
+    nodes = select(Node, filter=[Node.ancestor_id == org_id], page=page, per_page=per_page, limit=limit, offset=offset)
+    data = [node.to_dict() for node in nodes]
+    logging.info("get the subs of org(%s): %s" % (org.to_dict(), data))
+    return make_response(data=data)
+
