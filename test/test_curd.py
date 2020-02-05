@@ -36,14 +36,14 @@ class MyTestCase(unittest.TestCase):
         self.assertTrue(current_app.config['TESTING'])
 
     def test_retrieve_node_is_not_found(self):
-        res = self.client.get("/v1/org/1000")
+        res = self.client.get("/v1/orgs/1000")
         self.assertEqual(res.status_code, 404)
         res = res.json
         self.assertEqual(res["code"], 404)
         self.assertEqual(res["data"], [])
 
     def test_retrieve_single_node(self):
-        res = self.client.get("v1/org/1")
+        res = self.client.get("v1/orgs/1")
         self.assertEqual(res.status_code, 200)
         res = res.json
         self.assertEqual(res["code"], 200)
@@ -95,41 +95,40 @@ class MyTestCase(unittest.TestCase):
         self.assertTrue("created" in res["msg"])
 
     def test_update_no_data(self):
-        res = self.client.put("/v1/org/2", json={})
+        res = self.client.put("/v1/orgs/2", json={})
         self.assertEqual(res.status_code, 415)
         self.assertEqual(res.json["code"], 415)
         self.assertTrue("json" in res.json["msg"])
 
     def test_update_no_exist_ancestor(self):
-        res = self.client.put("/v1/org/2", json={"name": "test", "ancestor": "test22"})
+        res = self.client.put("/v1/orgs/2", json={"name": "test", "ancestor": "test22"})
         self.assertEqual(res.status_code, 400)
         self.assertEqual(res.json['code'], 400)
         self.assertTrue("不存在" in res.json["msg"])
 
     def test_update_not_complete_data(self):
-        res = self.client.put("/v1/org/2", json={"name": "test"})
+        res = self.client.put("/v1/orgs/2", json={"name": "test"})
         self.assertEqual(res.status_code, 400)
         self.assertEqual(res.json['code'], 400)
         self.assertTrue("不完整" in res.json["msg"])
 
     def test_update_right_data(self):
-        res = self.client.put("/v1/org/2", json={"name": "test2", "ancestor": "web开发组"})
+        res = self.client.put("/v1/orgs/2", json={"name": "test2", "ancestor": "web开发组"})
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.json["code"], 200)
         self.assertTrue("success" in res.json["msg"])
 
     def test_delete_wrong_id(self):
-        res = self.client.delete("/v1/org/100")
+        res = self.client.delete("/v1/orgs/100")
         self.assertEqual(res.status_code, 404)
         self.assertEqual(res.json["code"], 404)
         self.assertTrue("not found" in res.json["msg"])
 
     def test_delete_right_id(self):
-        res = self.client.delete("/v1/org/3")
+        res = self.client.delete("/v1/orgs/3")
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.json["code"], 200)
         self.assertTrue("success" in res.json["msg"])
-
 
 
 if __name__ == '__main__':
