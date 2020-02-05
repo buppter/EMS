@@ -1,10 +1,11 @@
 import logging
 
-from flask import Blueprint, request
+from flask import Blueprint, request, abort
 
 from app.utils.code import Code
 from app.utils.handler import data_handler
 from app.utils.response import make_response
+from app.utils.query import select
 from app.models import db
 from app.models.organization import Node
 
@@ -73,25 +74,23 @@ def create_org():
     return make_response(code=Code.CREATED)
 
 
-#
-# @org_bp.route("/orgs/<int:id>")
-# def node(id):
-#     page = request.args.get("page", 0)
-#     per_page = request.args.get("per_page", 0)
-#     limit = request.args.get("limit", 0)
-#     offset = request.args.get("offset", 0)
-#     order_by = request.args.get("order_by", None)
-#     org = request.args.get("org", None)
-#
-#     org_id = Organization.root()
-#     if org is not None:
-#         org = Organization.get(filter=[Organization.name == org], first=True)
-#         # root = simple_select(table_class=OrgRelation, order_by=OrgRelation.distance.desc(), first=True)
-#
-#         if org:
-#             org_id = org.id
-#         else:
-#             raise Exception("输入的组织名称不存在")
-#
-#     return jsonify({"data": "hello world"}), 404
+@org_bp.route("/orgs/ancestor/<int:org_id>", methods=["GET"])
+def get_ancestor(org_id):
+    org = Node.query.get_or_404(org_id)
+    org_ancestor = Node.query.get_or_404(org.ancestor_id)
+    logging.info("get the org: %s, its ancestor is: %s" % (org.to_dict(), org_ancestor.to_dict()))
+    return make_response(data=org_ancestor.to_dict())
+
+
+@org_bp.route("/orgs/subs/<int:org_id>", methods=["GET"])
+def get_descendant(org_id):
+    page = request.args.get("page", 0)
+    per_page = request.args.get("per_page", 0)
+    limit = request.args.get("limit", 0)
+    offset = request.args.get("offset", 0)
+    org = Node.query.get_or_404(org_id)
+    nodes = select(Node, filter=[Node.ancestor_id == org_id], page=page, per_page=per_page, limit=limit, offset=offset)
+    data = [node.to_dict() for node in nodes]
+    logging.info("get the subs of org(%s): %s" % (org.to_dict(), data))
+    return make_response(data=data)
 
