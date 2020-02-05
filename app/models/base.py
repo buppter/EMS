@@ -1,3 +1,5 @@
+import logging
+import traceback
 from contextlib import contextmanager
 
 from flask_sqlalchemy import SQLAlchemy as _SQLAlchemy, BaseQuery
@@ -11,8 +13,9 @@ class SQLAlchemy(_SQLAlchemy):
         try:
             yield
             self.session.commit()
-        except Exception:
+        except Exception as e:
             db.session.rollback()
+            logging.error('insert data into mysql error: %s' % traceback.format_exc(e))
             abort(500)
 
 

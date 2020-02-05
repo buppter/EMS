@@ -1,8 +1,10 @@
-from flask import Blueprint, request, _request_ctx_stack
+import logging
 
-from app.libs.code import Code
-from app.libs.handler import data_handler
-from app.libs.response import make_response
+from flask import Blueprint, request
+
+from app.utils.code import Code
+from app.utils.handler import data_handler
+from app.utils.response import make_response
 from app.models import db
 from app.models.organization import Node
 
@@ -17,32 +19,36 @@ def all_node():
     """
     node = Node.get_root()
     data = node.dumps()
-
+    logging.info("get all org info: %s" % data)
     return make_response(data=data)
 
 
-@org_bp.route("/org/<int:org_id>", methods=["GET", "PUT", "DELETE"])
+@org_bp.route("/orgs/<int:org_id>", methods=["GET", "PUT", "DELETE"])
 def get_org(org_id):
     """
-    获取或更新单个组织
+    获取、更新或删除单个部门组织
     :param org_id: 部门id
     :return:
     """
     org = Node.query.get_or_404(org_id)
     if request.method == "GET":
+        logging.info("get a org info: %s" % org.to_dict())
         return make_response(data=org.to_dict())
 
     if request.method == "PUT":
         name, ancestor = data_handler(request)
+        old_org_info = org
         org.name = name
         org.ancestor = ancestor
         with db.auto_commit():
             db.session.add(org)
+        logging.info("update a org info: %s, before update the org info: %s" % (org, old_org_info))
         return make_response()
 
     if request.method == "DELETE":
         with db.auto_commit():
             db.session.delete(org)
+        logging.info("delete a org: %s" % org)
         return make_response()
 
 
@@ -56,12 +62,14 @@ def create_org():
     """
     name, ancestor = data_handler(request)
     if Node.query.filter(Node.name == name).first():
+        logging.warning(
+            'create a org error: 该部门已存在, the create org info: {"name": %s, ancestor: %s}' % (name, ancestor.name))
         return make_response(code=Code.BAD_REQUEST, msg="该部门已存在")
 
     new_org = Node(name=name, ancestor=ancestor)
     with db.auto_commit():
         db.session.add(new_org)
-
+    logging.info("create a new org: %s" % new_org.to_dict())
     return make_response(code=Code.CREATED)
 
 
@@ -87,21 +95,3 @@ def create_org():
 #
 #     return jsonify({"data": "hello world"}), 404
 
-@org_bp.errorhandler(404)
-def error404(e):
-    return make_response(code=Code.NOT_FOUND)
-
-
-@org_bp.errorhandler(400)
-def bad_request(e):
-    return make_response(code=Code.BAD_REQUEST, msg=e.description)
-
-
-@org_bp.errorhandler(500)
-def bad_request(e):
-    return make_response(code=Code.SERVER_ERROR)
-
-
-@org_bp.errorhandler(415)
-def bad_request(e):
-    return make_response(code=Code.UNSUPPORTED, msg=e.description)

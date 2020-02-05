@@ -20,7 +20,8 @@ class TestConfig(Config):
 
 
 class ProductionConfig(Config):
-    pass
+    DEBUG = False
+    SQLALCHEMY_DATABASE_URI = secure.DEV_SQLALCHEMY_DATABASE_URI
 
 
 config = {
