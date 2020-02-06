@@ -181,6 +181,38 @@ class MyTestCase(unittest.TestCase):
         self.assertIsInstance(res.json["data"], list)
         self.clean_redis_data()
 
+    def test_get_exist_node_sub_with_queries_2(self):
+        res = self.client.get("/v1/orgs/subs/3?page=1&per_page=fdd&limit=1&offset=1")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.json["code"], 200)
+        self.assertIsInstance(res.json["data"], list)
+        self.clean_redis_data()
+
+    def test_query_with_error(self):
+        from app.utils.query import select
+        from app.models.organization import Node
+        try:
+            select(Node, error=111)
+        except Exception as e:
+            self.assertTrue("错误" in e.args[0])
+
+    def test_query_first_or_404(self):
+        from app.utils.query import select
+        from app.models.organization import Node
+        try:
+            select(Node, filter=[Node.id == 100], first=True)
+        except Exception as e:
+            self.assertEqual(e.code, 404)
+
+    def test_db_rollback(self):
+        from app.models.organization import Node
+        import traceback
+        try:
+            with db.auto_commit():
+                db.session.add(Node(name="伏羲实验室"))
+        except Exception as e:
+            self.assertEqual(e.code, 500)
+
     def test_405(self):
         res = self.client.post("/v1/orgs/1", json={})
         self.assertEqual(res.status_code, 405)
