@@ -226,21 +226,19 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 500)
         self.assertEqual(res.json["code"], 500)
 
+    def test_405(self):
+        res = self.client.post("/v1/orgs/1", json={})
+        self.assertEqual(res.status_code, 405)
+        self.assertEqual(res.json["code"], 405)
+        self.clean_redis_data()
 
-def test_405(self):
-    res = self.client.post("/v1/orgs/1", json={})
-    self.assertEqual(res.status_code, 405)
-    self.assertEqual(res.json["code"], 405)
-    self.clean_redis_data()
-
-
-def test_limit_rate(self):
-    for _ in range(11):
-        res = self.client.get("/v1/orgs")
-    self.assertEqual(res.status_code, 403)
-    self.assertEqual(res.json["code"], 403)
-    self.assertTrue("limit" in res.json["msg"])
-    self.clean_redis_data()
+    def test_limit_rate(self):
+        for _ in range(11):
+            res = self.client.get("/v1/orgs")
+        self.assertEqual(res.status_code, 403)
+        self.assertEqual(res.json["code"], 403)
+        self.assertTrue("limit" in res.json["msg"])
+        self.clean_redis_data()
 
 
 if __name__ == '__main__':
