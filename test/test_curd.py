@@ -1,13 +1,12 @@
 import unittest
 import sys
-from flask import current_app, abort
-
-from app.api.v1 import org_bp
+from flask import current_app
 
 sys.path.append("../")
 
 from app import create_app
 from app.models import db
+from app.api.v1 import org_bp
 from app.models.organization import Node
 
 
