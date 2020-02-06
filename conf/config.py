@@ -30,3 +30,9 @@ config = {
     "production": ProductionConfig,
     "default": DevelopmentConfig
 }
+
+PER_PAGE_NUM = 2
+
+LIMIT_RATE_NUM = 10
+
+REDIS_KEY_PREFIX = "limit_rate::remote_id::"

@@ -3,7 +3,8 @@ import logging
 from flask import Blueprint, request, abort
 
 from app.utils.code import Code
-from app.utils.handler import data_handler
+from app.handler.request_handler import data_handler
+from app.utils.limit_rate import limit_rate
 from app.utils.response import make_response
 from app.utils.query import select
 from app.models import db

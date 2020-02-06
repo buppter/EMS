@@ -1,4 +1,4 @@
-from conf.secure import PER_PAGE_NUM
+from conf.config import PER_PAGE_NUM
 
 
 def select(table_class, **kwargs):
