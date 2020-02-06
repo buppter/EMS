@@ -187,14 +187,6 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(res.json["code"], 405)
         self.clean_redis_data()
 
-    def test_500(self):
-        import os
-        os.system("sudo systemctl stop mysql")
-        res = self.client.put("/v1/orgs/2", json={"name": "test2", "ancestor": "web开发组"})
-        self.assertEqual(res.status_code, 500)
-        self.assertEqual(res.json["code"], 500)
-        os.system("sudo systemctl start mysql")
-
     def test_limit_rate(self):
         for _ in range(11):
             res = self.client.get("/v1/orgs")
