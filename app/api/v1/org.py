@@ -1,9 +1,10 @@
 import logging
 
-from flask import Blueprint, request, abort
+from flask import Blueprint, request
 
 from app.utils.code import Code
-from app.utils.handler import data_handler
+from app.handler.request_handler import data_handler
+from app.utils.limit_rate import limit_rate
 from app.utils.response import make_response
 from app.utils.query import select
 from app.models import db
@@ -13,6 +14,7 @@ org_bp = Blueprint("organization", __name__)
 
 
 @org_bp.route("/orgs")
+@limit_rate()
 def all_node():
     """
     获取完整的组织列表
@@ -25,6 +27,7 @@ def all_node():
 
 
 @org_bp.route("/orgs/<int:org_id>", methods=["GET", "PUT", "DELETE"])
+@limit_rate()
 def get_org(org_id):
     """
     获取、更新或删除单个部门组织
@@ -54,6 +57,7 @@ def get_org(org_id):
 
 
 @org_bp.route("/orgs", methods=["POST"])
+@limit_rate()
 def create_org():
     """
     添加部门
@@ -75,7 +79,13 @@ def create_org():
 
 
 @org_bp.route("/orgs/ancestor/<int:org_id>", methods=["GET"])
+@limit_rate()
 def get_ancestor(org_id):
+    """
+    获取某一部门的上级部门
+    :param org_id: 部门ID
+    :return:
+    """
     org = Node.query.get_or_404(org_id)
     org_ancestor = Node.query.get_or_404(org.ancestor_id)
     logging.info("get the org: %s, its ancestor is: %s" % (org.to_dict(), org_ancestor.to_dict()))
@@ -83,7 +93,13 @@ def get_ancestor(org_id):
 
 
 @org_bp.route("/orgs/subs/<int:org_id>", methods=["GET"])
-def get_descendant(org_id):
+@limit_rate()
+def get_subs(org_id):
+    """
+    获取某一部门子部门
+    :param org_id: 部门ID
+    :return:
+    """
     page = request.args.get("page", 0)
     per_page = request.args.get("per_page", 0)
     limit = request.args.get("limit", 0)

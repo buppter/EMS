@@ -10,7 +10,7 @@ def not_found(e):
 
 
 def method_not_allowed(e):
-    return make_response(code=405, msg="method not allowed")
+    return make_response(code=Code.NOT_ALLOWED)
 
 
 def bad_request(e):
@@ -18,12 +18,16 @@ def bad_request(e):
 
 
 def server_error(e):
-    logging.error("server error: %s" % traceback.format_exc(e))
+    logging.error("server error: %s" % traceback.format_exc())
     return make_response(code=Code.SERVER_ERROR)
 
 
 def unsupported(e):
     return make_response(code=Code.UNSUPPORTED, msg=e.description)
+
+
+def forbidden(e):
+    return make_response(code=Code.FORBIDDEN, msg=e.description)
 
 
 def error_handler_init(app):
@@ -32,3 +36,4 @@ def error_handler_init(app):
     app.register_error_handler(415, unsupported)
     app.register_error_handler(500, server_error)
     app.register_error_handler(400, bad_request)
+    app.register_error_handler(403, forbidden)

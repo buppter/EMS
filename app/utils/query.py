@@ -1,4 +1,4 @@
-from conf.secure import PER_PAGE_NUM
+from conf.config import PER_PAGE_NUM
 
 
 def select(table_class, **kwargs):
@@ -16,10 +16,8 @@ def select(table_class, **kwargs):
     per_page = kwargs.pop("per_page", 0)
     per_page = to_digit(per_page)
     query_first = kwargs.pop("first", False)
-    if fields is None:
-        session = table_class.query
-    else:
-        session = table_class.query.filter(*fields)
+
+    session = table_class.query.filter(*fields)
 
     if offset:
         session = session.offset(offset)

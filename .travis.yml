@@ -7,6 +7,7 @@ notifications:
 
 services:
   - mysql
+  - redis-server
 
 before_install:
   - sudo mysql -e 'CREATE DATABASE test DEFAULT CHARSET utf8 COLLATE utf8_general_ci;'
