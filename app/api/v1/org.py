@@ -14,6 +14,7 @@ org_bp = Blueprint("organization", __name__)
 
 
 @org_bp.route("/orgs")
+@limit_rate()
 def all_node():
     """
     获取完整的组织列表
@@ -26,6 +27,7 @@ def all_node():
 
 
 @org_bp.route("/orgs/<int:org_id>", methods=["GET", "PUT", "DELETE"])
+@limit_rate()
 def get_org(org_id):
     """
     获取、更新或删除单个部门组织
@@ -55,6 +57,7 @@ def get_org(org_id):
 
 
 @org_bp.route("/orgs", methods=["POST"])
+@limit_rate()
 def create_org():
     """
     添加部门
@@ -76,6 +79,7 @@ def create_org():
 
 
 @org_bp.route("/orgs/ancestor/<int:org_id>", methods=["GET"])
+@limit_rate()
 def get_ancestor(org_id):
     org = Node.query.get_or_404(org_id)
     org_ancestor = Node.query.get_or_404(org.ancestor_id)
