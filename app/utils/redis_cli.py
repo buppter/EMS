@@ -30,3 +30,8 @@ class Redis:
     def incr(cls, key):
         r = cls._get_r()
         return r.incr(REDIS_KEY_PREFIX + key)
+
+    @classmethod
+    def delete(cls, key):
+        r = cls._get_r()
+        return r.delete(REDIS_KEY_PREFIX + key)
