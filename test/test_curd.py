@@ -157,6 +157,25 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(res.json["code"], 200)
         self.assertIsInstance(res.json["data"], list)
 
+    def test_limit_rate(self):
+        for _ in range(11):
+            res = self.client.get("/v1/orgs")
+        self.assertEqual(res.status_code, 403)
+        self.assertEqual(res.json["code"], 403)
+        self.assertTrue("limit" in res.json["msg"])
+
+    def test_405(self):
+        res = self.client.post("/v1/orgs/1", json={})
+        self.assertEqual(res.status_code, 405)
+        self.assertEqual(res.json["code"], 405)
+
+    def test_500(self):
+        import os
+        os.system("sudo systemctl stop mysql")
+        res = self.client.put("/v1/orgs/2", json={"name": "test2", "ancestor": "web开发组"})
+        self.assertEqual(res.status_code, 500)
+        self.assertEqual(res.json["code"], 500)
+
 
 if __name__ == '__main__':
     unittest.main()
