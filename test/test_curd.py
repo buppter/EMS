@@ -195,7 +195,6 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(res.json["code"], 500)
         os.system("sudo systemctl start mysql")
 
-
     def test_limit_rate(self):
         for _ in range(11):
             res = self.client.get("/v1/orgs")
