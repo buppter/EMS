@@ -1,6 +1,6 @@
 import logging
 
-from flask import Blueprint, request, abort
+from flask import Blueprint, request
 
 from app.utils.code import Code
 from app.handler.request_handler import data_handler
