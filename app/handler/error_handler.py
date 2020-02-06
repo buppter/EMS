@@ -18,7 +18,7 @@ def bad_request(e):
 
 
 def server_error(e):
-    logging.error("server error: %s" % traceback.format_exc(e))
+    logging.error("server error: %s" % traceback.format_exc())
     return make_response(code=Code.SERVER_ERROR)
 
 

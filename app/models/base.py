@@ -13,9 +13,9 @@ class SQLAlchemy(_SQLAlchemy):
         try:
             yield
             self.session.commit()
-        except Exception as e:
+        except Exception:
             db.session.rollback()
-            logging.error('insert data into mysql error: %s' % traceback.format_exc(e))
+            logging.error('insert data into mysql error: %s' % traceback.format_exc())
             abort(500)
 
 
