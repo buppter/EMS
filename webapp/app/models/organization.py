@@ -14,6 +14,8 @@ class Node(Base):
     descendant = relationship("Node", cascade="all, delete-orphan", backref=backref("ancestor", remote_side=id),
                               collection_class=attribute_mapped_collection("name"))
 
+    employee = relationship("Employee", back_populates="org", lazy="dynamic")
+
     def __init__(self, name, ancestor=None):
         self.name = name
         self.ancestor = ancestor
