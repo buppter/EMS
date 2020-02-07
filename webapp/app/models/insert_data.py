@@ -44,8 +44,3 @@ def random_gender_name():
         name = f.name_male()
         gender = "男"
     return name, gender
-
-
-if __name__ == "__main__":
-    insert_org_data()
-    insert_employee_data()
