@@ -19,9 +19,7 @@ install:
   - pip install codecov
 
 script:
-  - ls
-  - pwd
-  - cd webapp && cd test && coverage run test_curd.py
+  - cd test && coverage run test_curd.py
 
 after_success:
   - codecov
