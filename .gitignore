@@ -216,3 +216,5 @@ pyvenv.cfg
 pip-selfcheck.json
 
 /log/
+/uwsgi.pid
+/webapp/log/

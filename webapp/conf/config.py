@@ -1,3 +1,5 @@
+import os
+
 from conf import secure
 
 
@@ -9,20 +11,24 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_ECHO = True
+    # SQLALCHEMY_ECHO = True
     SQLALCHEMY_DATABASE_URI = secure.DEV_SQLALCHEMY_DATABASE_URI
     REDIS_URL = secure.DEV_REDIS_URL
+    APP_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 
 class TestConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = secure.TEST_SQLALCHEMY_DATABASE_URI
-    REDIS_URL = secure.TEST_REDIS_URL
+    REDIS_URL = secure.DEV_REDIS_URL
+    APP_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 
 class ProductionConfig(Config):
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = secure.DEV_SQLALCHEMY_DATABASE_URI
+    SQLALCHEMY_DATABASE_URI = secure.PROD__SQLALCHEMY_DATABASE_URI
+    REDIS_URL = secure.PROD_REDIS_URL
+    APP_DIR = "/var/log/flask_web"
 
 
 config = {
