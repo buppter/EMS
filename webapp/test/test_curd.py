@@ -7,7 +7,7 @@ sys.path.append("../")
 from app import create_app
 from app.models import db
 from app.api.v1 import org_bp
-from app.models.organization import Node
+from app.models.insert_data import insert_org_data, insert_employee_data
 
 
 class MyTestCase(unittest.TestCase):
@@ -16,22 +16,15 @@ class MyTestCase(unittest.TestCase):
         self.client = self.app.test_client()
         self.app_context = self.app.app_context()
         self.app_context.push()
+        db.drop_all()
         db.create_all()
-        self.inset_test_data()
+        insert_org_data()
+        insert_employee_data()
 
     def tearDown(self) -> None:
         db.session.remove()
         db.drop_all()
         self.app_context.pop()
-
-    @staticmethod
-    def inset_test_data():
-        node1 = Node("伏羲实验室")
-        node2 = Node("平台开发组", ancestor=node1)
-        node3 = Node("web开发组", ancestor=node2)
-
-        db.session.add_all([node1, node2, node3])
-        db.session.commit()
 
     @staticmethod
     def clean_redis_data():
@@ -92,7 +85,7 @@ class MyTestCase(unittest.TestCase):
         self.clean_redis_data()
 
     def test_create_exist_org(self):
-        res = self.client.post("v1/orgs", json={"name": "平台开发组", "ancestor": "伏羲实验室"})
+        res = self.client.post("v1/orgs", json={"name": "web开发组", "ancestor": "平台架构组"})
         self.assertEqual(res.status_code, 400)
         res = res.json
         self.assertEqual(res["code"], 400)
@@ -100,7 +93,7 @@ class MyTestCase(unittest.TestCase):
         self.clean_redis_data()
 
     def test_create_right_data(self):
-        res = self.client.post("/v1/orgs", json={"name": "test", "ancestor": "平台开发组"})
+        res = self.client.post("/v1/orgs", json={"name": "前端开发组", "ancestor": "平台架构组"})
         self.assertEqual(res.status_code, 201)
         res = res.json
         self.assertEqual(res["code"], 201)
