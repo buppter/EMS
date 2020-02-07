@@ -25,15 +25,12 @@ def logger_init(app_dir):
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
 
-    log_dir = app_dir + "/log/"
-    if not os.path.exists(log_dir):
-        os.mkdir(log_dir)
     # 日志按每天切分到不同的文件夹下，先检查创建文件夹
     # 注意脚本一次执行时间过短时，是不会触发日志切割的，因此主动拆分
     today = time.strftime("%Y%m%d", time.localtime())
-    log_path = log_dir+ today
+    log_path = app_dir + "/log/" + today
     if not os.path.exists(log_path):
-        os.mkdir(log_path)
+        os.makedirs(log_path)
 
     info_handler = logging.handlers.TimedRotatingFileHandler(log_path + "/info.log", "H", 1, 720)
     error_handler = logging.handlers.TimedRotatingFileHandler(log_path + "/error.log", "H", 1, 720)
