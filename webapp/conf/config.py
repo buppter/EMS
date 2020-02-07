@@ -20,7 +20,7 @@ class DevelopmentConfig(Config):
 class TestConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = secure.TEST_SQLALCHEMY_DATABASE_URI
-    REDIS_URL = secure.DEV_REDIS_URL
+    REDIS_URL = secure.TEST_REDIS_URL
     APP_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 
