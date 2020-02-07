@@ -14,12 +14,12 @@ before_install:
   - sudo mysql -e 'CREATE DATABASE netease DEFAULT CHARSET utf8 COLLATE utf8_general_ci;'
 
 install:
-  - pip install -r requirements.txt
+  - cd webapp && pip install -r requirements.txt
   - pip install coverage
   - pip install codecov
 
 script:
-  - cd test && coverage run test_curd.py
+  - cd webapp/test && coverage run test_curd.py
 
 after_success:
   - codecov
