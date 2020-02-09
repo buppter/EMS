@@ -4,11 +4,9 @@ import unittest
 from flask import current_app
 
 sys.path.append("../")
-
-from webapp.test.base import BaseTest
+from tests.base import BaseTest
 from app.models import db
 from app.api.v1 import org_bp
-
 
 
 class OrgTestCase(BaseTest):

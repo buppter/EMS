@@ -1,9 +1,8 @@
-import sys
 import unittest
+import sys
 
 sys.path.append("../")
-
-from webapp.test.base import BaseTest
+from tests.base import BaseTest
 
 
 class EmpTestCase(BaseTest):
