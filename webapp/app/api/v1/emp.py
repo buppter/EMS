@@ -15,6 +15,11 @@ emp_bp = Blueprint("employee", __name__)
 
 @emp_bp.route("/employees", methods=["GET", "POST"])
 def employees():
+    """
+    获取员工列表，添加新员工
+    支持query参数：name, gender, org, limit, offset, page, per_page
+    :return:
+    """
     if request.method == "GET":
         page, per_page, limit, offset = request_args_handler(request)
 
@@ -55,6 +60,11 @@ def employees():
 
 @emp_bp.route("/employees/<int:emp_id>", methods=["GET", "PUT", "DELETE"])
 def single_emp(emp_id):
+    """
+    根据员工id获取，更新，删除员工信息
+    :param emp_id: 员工ID
+    :return:
+    """
     emp = Employee.query.get_or_404(emp_id, description="所查询的员工ID不存在")
     if request.method == "GET":
         return make_response(data=emp.dumps())
