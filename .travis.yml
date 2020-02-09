@@ -19,7 +19,7 @@ install:
   - pip install codecov
 
 script:
-  - cd test && coverage run test_org_api.py test_emp_api.py
+  - cd tests && coverage run test_org_api.py test_emp_api.py
 
 after_success:
   - codecov
