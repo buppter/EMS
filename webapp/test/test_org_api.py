@@ -3,12 +3,12 @@ import unittest
 
 from flask import current_app
 
-from test.base import BaseTest
-
 sys.path.append("../")
 
+from webapp.test.base import BaseTest
 from app.models import db
 from app.api.v1 import org_bp
+
 
 
 class OrgTestCase(BaseTest):
