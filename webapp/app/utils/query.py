@@ -4,7 +4,7 @@ from conf.config import PER_PAGE_NUM
 def select(table_class, **kwargs):
     if kwargs:
         if not set(kwargs.keys()).issubset(
-                ('filter', 'first', 'page', 'per_page', 'order_by', 'limit', 'offset')):
+                ('filter', 'first', 'page', 'per_page', 'order_by', 'limit', 'offset', 'exists')):
             raise Exception("传入的查询关键字错误")
     fields = kwargs.pop("filter", None)
     offset = kwargs.pop("offset", 0)
@@ -16,11 +16,19 @@ def select(table_class, **kwargs):
     per_page = kwargs.pop("per_page", 0)
     per_page = to_digit(per_page)
     query_first = kwargs.pop("first", False)
+    exists = kwargs.pop("exists", False)
 
-    session = table_class.query.filter(*fields)
+    if fields:
+        session = table_class.query.filter(*fields)
+    else:
+        session = table_class.query
+
+    if exists:
+        session.exists_or_404(description="not found")
 
     if offset:
         session = session.offset(offset)
+
     if limit:
         session = session.limit(limit)
 
@@ -29,7 +37,7 @@ def select(table_class, **kwargs):
     elif page and not per_page:
         return session.paginate(page, PER_PAGE_NUM, False).items
     if query_first:
-        return session.first_or_404()
+        return session.first_or_404(description="not found")
     return session.all()
 
 

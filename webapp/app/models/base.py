@@ -27,6 +27,12 @@ class Query(BaseQuery):
             abort(400, description=description)
         return rv
 
+    def exists_or_404(self, description=None):
+        rv = self.all()
+        if not rv:
+            abort(404, description=description)
+        return rv
+
 
 db = SQLAlchemy(query_class=Query)
 

@@ -33,7 +33,7 @@ class Node(Base):
         返回根节点
         todo:存在多个ancestor_id为空的情况如何判断
         """
-        root = Node.query.filter(Node.ancestor_id == None).first_or_404()
+        root = Node.query.filter(Node.ancestor_id == None).first_or_404(description="部门数据不存在")
         return root
 
     def to_dict(self):

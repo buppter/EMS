@@ -6,7 +6,7 @@ from app.utils.response import make_response
 
 
 def not_found(e):
-    return make_response(code=Code.NOT_FOUND)
+    return make_response(code=Code.NOT_FOUND, msg=e.description)
 
 
 def method_not_allowed(e):

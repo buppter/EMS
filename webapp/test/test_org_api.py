@@ -1,35 +1,16 @@
-import unittest
 import sys
+import unittest
+
 from flask import current_app
 
 sys.path.append("../")
 
-from app import create_app
+from test.base import BaseTest
 from app.models import db
 from app.api.v1 import org_bp
-from app.models.insert_data import insert_org_data, insert_employee_data
 
 
-class MyTestCase(unittest.TestCase):
-    def setUp(self) -> None:
-        self.app = create_app("test")
-        self.client = self.app.test_client()
-        self.app_context = self.app.app_context()
-        self.app_context.push()
-        db.drop_all()
-        db.create_all()
-        insert_org_data()
-        insert_employee_data()
-
-    def tearDown(self) -> None:
-        db.session.remove()
-        db.drop_all()
-        self.app_context.pop()
-
-    @staticmethod
-    def clean_redis_data():
-        from app.utils.redis_cli import Redis
-        Redis.delete("127.0.0.1")
+class OrgTestCase(BaseTest):
 
     def test_app_is_testing(self):
         self.assertTrue(current_app.config['TESTING'])
@@ -133,7 +114,7 @@ class MyTestCase(unittest.TestCase):
         res = self.client.delete("/v1/orgs/100")
         self.assertEqual(res.status_code, 404)
         self.assertEqual(res.json["code"], 404)
-        self.assertTrue("not found" in res.json["msg"])
+        self.assertTrue("不存在" in res.json["msg"])
         self.clean_redis_data()
 
     def test_delete_right_id(self):
@@ -169,14 +150,21 @@ class MyTestCase(unittest.TestCase):
         self.clean_redis_data()
 
     def test_get_exist_node_sub_with_queries(self):
-        res = self.client.get("/v1/orgs/subs/3?page=1&per_page=1&limit=1&offset=1")
+        res = self.client.get("/v1/orgs/subs/1?page=1&per_page=1")
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.json["code"], 200)
         self.assertIsInstance(res.json["data"], list)
         self.clean_redis_data()
 
     def test_get_exist_node_sub_with_queries_2(self):
-        res = self.client.get("/v1/orgs/subs/3?page=1&per_page=fdd&limit=1&offset=1")
+        res = self.client.get("/v1/orgs/subs/1?page=1&per_page=fdd")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.json["code"], 200)
+        self.assertIsInstance(res.json["data"], list)
+        self.clean_redis_data()
+
+    def test_get_exist_node_sub_with_queries_3(self):
+        res = self.client.get("/v1/orgs/subs/3?limit=1&offset=3")
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.json["code"], 200)
         self.assertIsInstance(res.json["data"], list)

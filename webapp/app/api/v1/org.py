@@ -1,9 +1,11 @@
 import logging
+import traceback
 
+from werkzeug.exceptions import abort
 from flask import Blueprint, request
 
 from app.utils.code import Code
-from app.handler.request_handler import data_handler
+from app.handler.request_handler import org_data_handler, request_args_handler
 from app.utils.limit_rate import limit_rate
 from app.utils.response import make_response
 from app.utils.query import select
@@ -28,24 +30,29 @@ def all_node():
 
 @org_bp.route("/orgs/<int:org_id>", methods=["GET", "PUT", "DELETE"])
 @limit_rate()
-def get_org(org_id):
+def single_org(org_id):
     """
     获取、更新或删除单个部门组织
     :param org_id: 部门id
     :return:
     """
-    org = Node.query.get_or_404(org_id)
+    org = Node.query.get_or_404(org_id, description="部门ID不存在")
     if request.method == "GET":
         logging.info("get a org info: %s" % org.to_dict())
         return make_response(data=org.to_dict())
 
     if request.method == "PUT":
-        name, ancestor = data_handler(request)
+        name, ancestor = org_data_handler(request)
         old_org_info = org
         org.name = name
         org.ancestor = ancestor
-        with db.auto_commit():
-            db.session.add(org)
+        try:
+            db.session.commit()
+        except Exception:
+            logging.error(
+                "update org error, org info: %s, old org info: %s. \n traceback error: %s" % (
+                    org.to_dict(), old_org_info.to_dict(), traceback.format_exc()))
+            abort(500)
         logging.info("update a org info: %s, before update the org info: %s" % (org, old_org_info))
         return make_response()
 
@@ -65,12 +72,7 @@ def create_org():
     示例：{"name":"xxx", "ancestor": "xx"}
     :return:
     """
-    name, ancestor = data_handler(request)
-    if Node.query.filter(Node.name == name).first():
-        logging.warning(
-            'create a org error: 该部门已存在, the create org info: {"name": %s, ancestor: %s}' % (name, ancestor.name))
-        return make_response(code=Code.BAD_REQUEST, msg="该部门已存在")
-
+    name, ancestor = org_data_handler(request)
     new_org = Node(name=name, ancestor=ancestor)
     with db.auto_commit():
         db.session.add(new_org)
@@ -86,8 +88,8 @@ def get_ancestor(org_id):
     :param org_id: 部门ID
     :return:
     """
-    org = Node.query.get_or_404(org_id)
-    org_ancestor = Node.query.get_or_404(org.ancestor_id)
+    org = Node.query.get_or_404(org_id, description="部门ID不存在")
+    org_ancestor = Node.query.get_or_404(org.ancestor_id, description="部门不存在")
     logging.info("get the org: %s, its ancestor is: %s" % (org.to_dict(), org_ancestor.to_dict()))
     return make_response(data=org_ancestor.to_dict())
 
@@ -100,13 +102,9 @@ def get_subs(org_id):
     :param org_id: 部门ID
     :return:
     """
-    page = request.args.get("page", 0)
-    per_page = request.args.get("per_page", 0)
-    limit = request.args.get("limit", 0)
-    offset = request.args.get("offset", 0)
-    org = Node.query.get_or_404(org_id)
+    page, per_page, limit, offset = request_args_handler(request)
+    org = Node.query.get_or_404(org_id, description="部门ID不存在")
     nodes = select(Node, filter=[Node.ancestor_id == org_id], page=page, per_page=per_page, limit=limit, offset=offset)
     data = [node.to_dict() for node in nodes]
     logging.info("get the subs of org(%s): %s" % (org.to_dict(), data))
     return make_response(data=data)
-
