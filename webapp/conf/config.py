@@ -38,7 +38,7 @@ config = {
     "default": DevelopmentConfig
 }
 
-PER_PAGE_NUM = 2
+PER_PAGE_NUM = 20
 
 LIMIT_RATE_NUM = 10
 
