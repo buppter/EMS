@@ -7,6 +7,7 @@ from flask import Blueprint, request
 from app.handler.request_handler import request_args_handler, emp_data_handler
 from app.models import Employee, Node, db
 from app.utils.code import Code
+from app.utils.limit_rate import limit_rate
 from app.utils.query import select
 from app.utils.response import make_response
 
@@ -14,6 +15,7 @@ emp_bp = Blueprint("employee", __name__)
 
 
 @emp_bp.route("/employees", methods=["GET", "POST"])
+@limit_rate()
 def employees():
     """
     获取员工列表，添加新员工
@@ -59,6 +61,7 @@ def employees():
 
 
 @emp_bp.route("/employees/<int:emp_id>", methods=["GET", "PUT", "DELETE"])
+@limit_rate()
 def single_emp(emp_id):
     """
     根据员工id获取，更新，删除员工信息
