@@ -8,7 +8,7 @@ from app.models.organization import Node
 class Employee(Base):
     __tablename__ = "db_employee"
     id = Column(Integer, primary_key=True)
-    name = Column(String(32), unique=True, nullable=False, comment="人员姓名")
+    name = Column(String(32), nullable=False, comment="人员姓名")
     _gender = Column(Integer, default=2, comment="性别")
     org_id = Column(Integer, ForeignKey(Node.id), comment="部门ID")
     org = relationship("Node", back_populates="employee")
