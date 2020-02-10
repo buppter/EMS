@@ -5,7 +5,7 @@ SECRET_KEY = "employee management system"
 """
 ============DEV CONFIG============
 """
-DEV_SQLALCHEMY_DATABASE_URI = 'mysql://root@127.0.0.1:3306/netease'
+DEV_SQLALCHEMY_DATABASE_URI = 'mysql://root:123456@127.0.0.1:3306/ems'
 
 DEV_REDIS_URL = {
     "HOST": os.getenv("HOST"),
