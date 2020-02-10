@@ -28,7 +28,7 @@ class ProductionConfig(Config):
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = secure.PROD__SQLALCHEMY_DATABASE_URI
     REDIS_URL = secure.PROD_REDIS_URL
-    APP_DIR = "/var/log/flask_web"
+    APP_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 
 config = {

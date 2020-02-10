@@ -1,0 +1,46 @@
+version: "3"
+services:
+  redis:
+    image: redis:latest
+    restart: always
+    container_name: redis_db
+
+  mysql:
+    image: mysql:5.7
+    ports:
+      - "32000:3306"
+    volumes:
+      - ./db/init.sql:/data/init.sql
+    command: --init-file /data/init.sql
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"
+    restart: always
+
+  web:
+    volumes:
+      - ./webapp/log:/opt/www/webapp/log
+    build: ./webapp
+    container_name: webapp
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      - mysql
+    links:
+      - redis
+      - mysql
+    working_dir: /opt/www/webapp
+
+  nginx:
+    image: nginx:latest
+    restart: always
+    container_name: my_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/ems.conf:/etc/nginx/conf.d/ems.conf
+      - ./webapp/log:/var/log/nginx
+    depends_on:
+      - web
