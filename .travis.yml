@@ -24,5 +24,5 @@ script:
 
 after_success:
   - codecov
-  - docker-compose build && docker-compose -d
+  - docker-compose build && docker-compose up -d
   - curl 127.0.0.1/v1/employees?page=1&per_page=10
