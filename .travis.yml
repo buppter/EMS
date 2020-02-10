@@ -8,6 +8,7 @@ notifications:
 services:
   - mysql
   - redis-server
+  - docker
 
 before_install:
   - sudo mysql -e 'CREATE DATABASE test DEFAULT CHARSET utf8 COLLATE utf8_general_ci;'
@@ -23,3 +24,5 @@ script:
 
 after_success:
   - codecov
+  - docker-compose build && docker-compose -d
+  - curl 127.0.0.1/v1/employees?page=1&per_page=10
