@@ -16,7 +16,6 @@ before_install:
 
 cache:
   - pip
-  - docker
 
 install:
   - cd webapp && pip install -r requirements.txt
