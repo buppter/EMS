@@ -25,7 +25,9 @@ install:
 
 script:
   - cd tests && coverage run -m unittest discover
-  - docker-compose build && docker-compose up -d
+  - docker-compose build
+  - docker-compose up -d
+  - docker-compose logs
 
 
 
