@@ -6,7 +6,7 @@ from app.models.organization import Node
 
 
 class Employee(Base):
-    __tablename__ = "db_employee"
+    __tablename__ = "ems_employee"
     id = Column(Integer, primary_key=True)
     name = Column(String(32), nullable=False, comment="人员姓名")
     _gender = Column(Integer, default=2, comment="性别")
