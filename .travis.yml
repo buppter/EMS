@@ -26,4 +26,4 @@ script:
 
 after_success:
   - codecov
-  - curl 127.0.0.1/v1/employees?page=1&per_page=5
+  - sleep 1m && curl 127.0.0.1/v1/employees?page=1&per_page=5
