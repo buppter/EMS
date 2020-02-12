@@ -19,7 +19,7 @@ services:
 
   web:
     volumes:
-      - ./webapp/log:/opt/www/webapp/log
+      - ./webapp:/opt/www/webapp
     build: ./webapp
     container_name: webapp
     restart: always
@@ -32,6 +32,11 @@ services:
       - redis
       - mysql
     working_dir: /opt/www/webapp
+    command:
+      - /bin/bash
+      - -c
+      - |
+        python3 manager.py create && python3 manager.py insert -t 200 && uwsgi --ini uwsgi.ini
 
   nginx:
     image: nginx:latest
