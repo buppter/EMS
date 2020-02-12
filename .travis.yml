@@ -34,5 +34,5 @@ script:
 after_success:
   - codecov
   - docker-compose logs
-  - sleep 3m && curl 127.0.0.1/v1/employees?page=1&per_page=5
+  - sleep 5m && curl 127.0.0.1/v1/employees?page=1&per_page=5
   - docker-compose logs
