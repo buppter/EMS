@@ -6,7 +6,7 @@ from .base import Base
 
 
 class Node(Base):
-    __tablename__ = "db_node"
+    __tablename__ = "ems_node"
     id = Column(Integer, primary_key=True)
     name = Column(String(32), unique=True, nullable=False, comment="组名称")
     ancestor_id = Column(Integer, ForeignKey(id))

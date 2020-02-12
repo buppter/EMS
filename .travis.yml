@@ -8,10 +8,14 @@ notifications:
 services:
   - mysql
   - redis-server
+  - docker
 
 before_install:
   - sudo mysql -e 'CREATE DATABASE test DEFAULT CHARSET utf8 COLLATE utf8_general_ci;'
   - sudo mysql -e 'CREATE DATABASE netease DEFAULT CHARSET utf8 COLLATE utf8_general_ci;'
+
+cache:
+  - pip
 
 install:
   - cd webapp && pip install -r requirements.txt
@@ -21,5 +25,8 @@ install:
 script:
   - cd tests && coverage run -m unittest discover
 
+
 after_success:
   - codecov
+  - docker-compose up --build
+

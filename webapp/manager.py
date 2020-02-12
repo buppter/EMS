@@ -4,7 +4,7 @@ from flask_script import Manager
 
 from app.utils.script import Insert, Create, Drop
 
-app = create_app()
+app = create_app("production")
 
 manager = Manager(app)
 
