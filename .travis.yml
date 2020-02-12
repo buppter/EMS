@@ -24,9 +24,12 @@ install:
 
 script:
   - cd tests && coverage run -m unittest discover
+  - docker-compose build && docker-compose up -d
 
 
 after_success:
   - codecov
-  - docker-compose up --build
+  - sleep 5m
+  - docker-compose logs
+  - curl 127.0.0.1/v1/employees?page=1&per_page=5
 
