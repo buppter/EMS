@@ -31,6 +31,7 @@ class Create(Command):
         from app.models import db
         from app.models.organization import Node
         from app.models.employee import Employee
+        db.drop_all()
         db.create_all()
 
 
