@@ -25,7 +25,7 @@ class TestConfig(Config):
 
 
 class ProductionConfig(Config):
-    DEBUG = True
+    DEBUG = False
     SQLALCHEMY_DATABASE_URI = secure.PROD__SQLALCHEMY_DATABASE_URI
     REDIS_URL = secure.PROD_REDIS_URL
     APP_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
