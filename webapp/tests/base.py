@@ -5,7 +5,7 @@ sys.path.append("../")
 
 from app import create_app
 from app.models import db
-from app.models.insert_data import insert_org_data, insert_employee_data
+from app.models.insert_data import insert_department_data, insert_employee_data
 
 
 class BaseTest(unittest.TestCase):
@@ -16,7 +16,7 @@ class BaseTest(unittest.TestCase):
         self.app_context.push()
         db.drop_all()
         db.create_all()
-        insert_org_data()
+        insert_department_data()
         insert_employee_data()
 
     def tearDown(self) -> None:

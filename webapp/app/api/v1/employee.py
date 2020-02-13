@@ -5,21 +5,21 @@ from werkzeug.exceptions import abort
 from flask import Blueprint, request
 
 from app.handler.request_handler import request_args_handler, emp_data_handler
-from app.models import Employee, Node, db
+from app.models import Employee, Department, db
 from app.utils.code import Code
 from app.utils.limit_rate import limit_rate
 from app.utils.query import select
 from app.utils.response import make_response
 
-emp_bp = Blueprint("employee", __name__)
+employee_bp = Blueprint("employee", __name__)
 
 
-@emp_bp.route("/employees", methods=["GET", "POST"])
+@employee_bp.route("/employees", methods=["GET", "POST"])
 @limit_rate()
 def employees():
     """
     获取员工列表，添加新员工
-    支持query参数：name, gender, org, limit, offset, page, per_page
+    支持query参数：name, gender, department, limit, offset, page, per_page
     :return:
     """
     if request.method == "GET":
@@ -34,11 +34,11 @@ def employees():
             fields.append(Employee._gender == gender)
             exists = True
 
-        org = request.args.get("org")
-        if org:
-            org = Node.query.filter(Node.name == org).first_or_404(description="所查询的org不存在")
-        if org:
-            fields.append(Employee.org_id == org.id)
+        department = request.args.get("department")
+        if department:
+            department = Department.query.filter(Department.name == department).first_or_404(description="所查询的department不存在")
+        if department:
+            fields.append(Employee.department_id == department.id)
 
         name = request.args.get("name")
         if name:
@@ -52,15 +52,15 @@ def employees():
         return make_response(data=data)
 
     if request.method == "POST":
-        name, gender, org = emp_data_handler(request)
-        new_emp = Employee(name=name, gender=gender, org_id=org.id)
+        name, gender, department = emp_data_handler(request)
+        new_emp = Employee(name=name, gender=gender, department_id=department.id)
         with db.auto_commit():
             db.session.add(new_emp)
         logging.info("create a new employee: %s" % new_emp.dumps())
         return make_response(code=Code.CREATED)
 
 
-@emp_bp.route("/employees/<int:emp_id>", methods=["GET", "PUT", "DELETE"])
+@employee_bp.route("/employees/<int:emp_id>", methods=["GET", "PUT", "DELETE"])
 @limit_rate()
 def single_emp(emp_id):
     """
@@ -73,11 +73,11 @@ def single_emp(emp_id):
         return make_response(data=emp.dumps())
 
     if request.method == "PUT":
-        name, gender, org = emp_data_handler(request)
+        name, gender, department = emp_data_handler(request)
         old_emp = emp
         emp.name = name
         emp.gender = gender
-        emp.org_id = org.id
+        emp.department_id = department.id
 
         try:
             db.session.commit()

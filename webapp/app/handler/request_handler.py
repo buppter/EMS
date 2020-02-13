@@ -2,7 +2,7 @@ import logging
 
 from werkzeug.exceptions import abort
 
-from app.models.organization import Node
+from app.models.department import Department
 
 
 def request_args_handler(request):
@@ -13,24 +13,24 @@ def request_args_handler(request):
     return page, per_page, limit, offset
 
 
-def org_data_handler(request):
+def department_data_handler(request):
     data = request.get_json()
     if not data:
         logging.warning("data handler warning: 数据格式不正确，应该json格式")
         abort(415, description="数据应该为json格式")
     name = data.get("name")
 
-    if Node.query.filter(Node.name == name).first():
+    if Department.query.filter(Department.name == name).first():
         logging.warning("data handler warning: 该部门已存在")
         abort(400, description="该部门已存在")
 
-    ancestor = data.get("ancestor")
-    if not (name and ancestor):
+    parent = data.get("parent")
+    if not (name and parent):
         logging.warning("data handler warning: 数据不完整")
         abort(400, description="数据不完整")
-    ancestor_node = Node.query.filter(Node.name == ancestor).first_or_400(description="所输入的ancestor不存在")
+    parent_node = Department.query.filter(Department.name == parent).first_or_400(description="所输入的parent不存在")
 
-    return name, ancestor_node
+    return name, parent_node
 
 
 def emp_data_handler(request):
@@ -40,12 +40,12 @@ def emp_data_handler(request):
         abort(415, description="数据应该为json格式")
     name = data.get("name")
     gender = data.get("gender")
-    org = data.get("org")
+    department = data.get("department")
 
     # employee 无需判断 name 是否存在，所以在 model 设计里， Employee 的 name 字段不是 unique
-    if not (name and gender and org):
+    if not (name and gender and department):
         logging.warning("data handler warning: 数据不完整")
         abort(400, description="数据不完整")
-    org = Node.query.filter(Node.name == org).first_or_400(description="所输入的org不存在")
+    department = Department.query.filter(Department.name == department).first_or_400(description="所输入的department不存在")
 
-    return name, gender, org
+    return name, gender, department
