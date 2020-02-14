@@ -8,7 +8,7 @@
 
 ## 目录结构
 
-```shell
+```
 FileTree
 ├── LICENSE
 ├── README.md
