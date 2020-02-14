@@ -7,7 +7,7 @@ from flask import Blueprint, request
 from app.handler.request_handler import request_args_handler, employee_data_handler
 from app.models import Employee, Department, db
 from app.utils.code import Code
-from app.utils.limit_rate import limit_rate
+from app.utils.rate_limiter import limit_rate
 from app.utils.query import select
 from app.utils.response import make_response
 

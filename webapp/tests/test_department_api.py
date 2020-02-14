@@ -213,10 +213,10 @@ class DepartmentTestCase(BaseTest):
         self.clean_redis_data()
 
     def test_limit_rate(self):
-        for _ in range(11):
+        for _ in range(15):
             res = self.client.get("/v1/departments")
-        self.assertEqual(res.status_code, 403)
-        self.assertEqual(res.json["code"], 403)
+        self.assertEqual(res.status_code, 429)
+        self.assertEqual(res.json["code"], 429)
         self.assertTrue("limit" in res.json["msg"])
         self.clean_redis_data()
 

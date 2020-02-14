@@ -10,7 +10,7 @@ class Code:
     UNSUPPORTED = 415
     SERVER_ERROR = 500
     NOT_ALLOWED = 405
-    FORBIDDEN = 403
+    LIMIT = 429
 
     msg = {
         SUCCESS: "success",
@@ -21,5 +21,5 @@ class Code:
         SERVER_ERROR: "server error",
         UNSUPPORTED: "unsupported media type",
         NOT_ALLOWED: "method not allowed",
-        FORBIDDEN: "forbidden"
+        LIMIT: "too many requests"
     }

@@ -39,3 +39,9 @@ class Redis:
     def delete(cls, key):
         r = cls._get_r()
         return r.delete(REDIS_KEY_PREFIX + key)
+
+    @classmethod
+    def script(cls, lua):
+        r = cls._get_r()
+        script = r.register_script(lua)
+        return script

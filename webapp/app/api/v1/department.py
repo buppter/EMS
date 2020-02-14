@@ -6,7 +6,7 @@ from flask import Blueprint, request
 
 from app.utils.code import Code
 from app.handler.request_handler import department_data_handler, request_args_handler
-from app.utils.limit_rate import limit_rate
+from app.utils.rate_limiter import limit_rate
 from app.utils.response import make_response
 from app.utils.query import select
 from app.models import db
@@ -23,7 +23,7 @@ def all_node():
     :return:
     """
     node = Department.get_root()
-    data = node.dumps()
+    data = node.dumps_all()
     logging.info("get all department info: %s" % data)
     return make_response(data=data)
 
