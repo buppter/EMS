@@ -4,7 +4,7 @@ from werkzeug.exceptions import abort
 
 from flask import Blueprint, request
 
-from app.handler.request_handler import request_args_handler, emp_data_handler
+from app.handler.request_handler import request_args_handler, employee_data_handler
 from app.models import Employee, Department, db
 from app.utils.code import Code
 from app.utils.limit_rate import limit_rate
@@ -52,7 +52,7 @@ def employees():
         return make_response(data=data)
 
     if request.method == "POST":
-        name, gender, department = emp_data_handler(request)
+        name, gender, department = employee_data_handler(request)
         new_emp = Employee(name=name, gender=gender, department_id=department.id)
         with db.auto_commit():
             db.session.add(new_emp)
@@ -73,7 +73,7 @@ def single_emp(emp_id):
         return make_response(data=emp.dumps())
 
     if request.method == "PUT":
-        name, gender, department = emp_data_handler(request)
+        name, gender, department = employee_data_handler(request)
         old_emp = emp
         emp.name = name
         emp.gender = gender

@@ -31,17 +31,17 @@ def department_data_handler(request):
     parent = data.get("parent")
     if not (name and parent):
         logging.warning("data handler warning: 数据不完整")
-        abort(400, description="数据不完整")
+        abort(400, description="请求数据不完整")
     parent_node = Department.query.filter(Department.name == parent).first_or_400(description="所输入的parent不存在")
 
     return name, parent_node
 
 
-def emp_data_handler(request):
+def employee_data_handler(request):
     data = request.get_json()
     if not data:
         logging.warning("data handler warning: 数据格式不正确，应该json格式")
-        abort(415, description="数据应该为json格式")
+        abort(415, description="请求数据应该为json格式")
     name = data.get("name")
     gender = data.get("gender")
     department = data.get("department")
@@ -49,7 +49,7 @@ def emp_data_handler(request):
     # employee 无需判断 name 是否存在，所以在 model 设计里， Employee 的 name 字段不是 unique
     if not (name and gender and department):
         logging.warning("data handler warning: 数据不完整")
-        abort(400, description="数据不完整")
+        abort(400, description="请求数据不完整")
     department = Department.query.filter(Department.name == department).first_or_400(description="所输入的department不存在")
 
     return name, gender, department

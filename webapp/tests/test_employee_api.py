@@ -53,28 +53,28 @@ class EmpTestCase(BaseTest):
         self.assertEqual(res.json["code"], 200)
         self.clean_redis_data()
 
-    def test_create_employeeloyee_with_error_json_data(self):
+    def test_create_employee_with_error_json_data(self):
         res = self.client.post("/v1/employees", json={})
         self.assertEqual(res.status_code, 415)
         self.assertEqual(res.json["code"], 415)
         self.assertTrue("json" in res.json["msg"])
         self.clean_redis_data()
 
-    def test_create_employeeloyee_with_not_complete_data(self):
+    def test_create_employee_with_not_complete_data(self):
         res = self.client.post("/v1/employees", json={"name": "test"})
         self.assertEqual(res.status_code, 400)
         self.assertEqual(res.json["code"], 400)
         self.assertTrue("不完整" in res.json["msg"])
         self.clean_redis_data()
 
-    def test_create_employeeloyee_with_not_exist_department(self):
+    def test_create_employee_with_not_exist_department(self):
         res = self.client.post("/v1/employees", json={"name": "test", "gender": "男", "department": "not exist"})
         self.assertEqual(res.status_code, 400)
         self.assertEqual(res.json["code"], 400)
         self.assertTrue("不存在" in res.json["msg"])
         self.clean_redis_data()
 
-    def test_create_employeeloyee_with_right_data(self):
+    def test_create_employee_with_right_data(self):
         res = self.client.post("/v1/employees", json={"name": "test", "gender": "男", "department": "图像组"})
         self.assertEqual(res.status_code, 201)
         self.assertEqual(res.json["code"], 201)
