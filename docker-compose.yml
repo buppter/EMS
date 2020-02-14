@@ -21,10 +21,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: "123456"
     restart: always
-    healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-      timeout: 20s
-      retries: 10
 
   web:
     volumes:
@@ -39,14 +35,13 @@ services:
       - mysql
     links:
       - redis
-      - mysql:
-        condition: service_healthy
+      - mysql
     working_dir: /opt/www/webapp
     command:
       - /bin/bash
       - -c
       - |
-        python3 manager.py create && python3 manager.py insert -t 200 && uwsgi --ini uwsgi.ini
+        chmod 777 ./wait-for-it.sh && ./wait-for-it.sh mysql_db:3306 -- python3 manager.py create && python3 manager.py insert -t 200 && uwsgi --ini uwsgi.ini
 
   nginx:
     image: nginx:latest
