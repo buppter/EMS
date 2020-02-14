@@ -3,6 +3,8 @@ services:
   redis:
     image: redis:latest
     restart: always
+    ports:
+      - "63790:6379"
     container_name: redis_db
     volumes:
       - ./db/data/redis:/data
@@ -10,7 +12,7 @@ services:
   mysql:
     image: mysql:5.7
     ports:
-      - "32000:3306"
+      - "33060:3306"
     volumes:
       - ./db/init.sql:/data/init.sql
       - ./db/data/mysql:/var/lib/mysql
