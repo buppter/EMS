@@ -12,30 +12,30 @@
 FileTree
 ├── LICENSE
 ├── README.md
-├── db										# 数据库相关配置
+├── db						# 数据库相关配置
 ├── docker-compose.yml		# docker-compose 配置
-├── nginx									# nginx 配置文件
-└── webapp								# Flask 项目主要代码
-    ├── Dockerfile				# Flask 项目 Dockerfile 
+├── nginx					# nginx 配置文件
+└── webapp					# Flask 项目主要代码
+    ├── Dockerfile		    # Flask 项目 Dockerfile 
     ├── __init__.py
-    ├── app								# 包括 routes，models，utils 相关代码
-    ├── conf							# 项目配置
-    ├── manager.py				# 项目入口
-    ├── migrations				# 数据库迁移
+    ├── app					# 包括 routes，models，utils 相关代码
+    ├── conf				# 项目配置
+    ├── manager.py			# 项目入口
+    ├── migrations			# 数据库迁移
     ├── requirements.txt	# 项目依赖
-    ├── tests							# 单元测试
-    └── uwsgi.ini					# uwsgi 配置
+    ├── tests				# 单元测试
+    └── uwsgi.ini			# uwsgi 配置
 ```
 
 ## 下载安装
 
 该项目运行方式灵活，可以在 Docker 或本地环境中运行
 
-#### Docker 中运行
+### Docker 中运行
 
 *请先安装好 Docker 和 docker-compose*
 
-##### 安装步骤
+#### 安装步骤
 
 - 克隆本仓库
 
@@ -51,11 +51,11 @@ FileTree
 
 - 访问 `127.0.0.1/v1/departments` 查看返回的数据
 
-#### 本地环境运行
+### 本地环境运行
 
 *请先在本地环境中安装好 `MySQL`，`Redis`，`Nginx(可选)`，并创建所需数据库*
 
-##### 安装步骤
+#### 安装步骤
 
 - 克隆本仓库
 
@@ -80,7 +80,7 @@ FileTree
 
   项目入口文件为 `webapp/manager.py` ，在文件中配置的为 `Production` 环境；如需修改运行环境，请在 `app = create_app("production")` 这一行中进行更换。
 
-  1. 通过 `uwsgi` 启动运行
+  **1. 通过 `uwsgi` 启动运行**
 
   ```bash
   cd webapp
@@ -89,7 +89,7 @@ FileTree
 
   通过访问 `127.0.0.1:8000/v1/departments` 查看返回数据*（**在访问前需先插入数据**）*
 
-  2. 通过 `Werkzeug` 启动运行
+  **2. 通过 `Werkzeug` 启动运行**
 
   ```bash
   cd webapp
