@@ -38,6 +38,8 @@ config = {
 
 PER_PAGE_NUM = 20
 
-LIMIT_RATE_NUM = 10
+LIMIT_MAX_TOKEN = 10
+
+LIMIT_TOKEN_RATE = 10
 
 REDIS_KEY_PREFIX = "limit_rate::remote_id::"

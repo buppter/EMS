@@ -4,6 +4,10 @@ import traceback
 from app.utils.code import Code
 from app.utils.response import make_response
 
+"""
+自定义error handler
+"""
+
 
 def not_found(e):
     return make_response(code=Code.NOT_FOUND, msg=e.description)
@@ -26,8 +30,8 @@ def unsupported(e):
     return make_response(code=Code.UNSUPPORTED, msg=e.description)
 
 
-def forbidden(e):
-    return make_response(code=Code.FORBIDDEN, msg=e.description)
+def limit(e):
+    return make_response(code=Code.LIMIT, msg=e.description)
 
 
 def error_handler_init(app):
@@ -36,4 +40,4 @@ def error_handler_init(app):
     app.register_error_handler(415, unsupported)
     app.register_error_handler(500, server_error)
     app.register_error_handler(400, bad_request)
-    app.register_error_handler(403, forbidden)
+    app.register_error_handler(429, limit)

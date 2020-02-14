@@ -2,7 +2,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, String, ForeignKey
 
 from app.models.base import Base
-from app.models.organization import Node
+from app.models.department import Department
 
 
 class Employee(Base):
@@ -10,8 +10,8 @@ class Employee(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(32), nullable=False, comment="人员姓名")
     _gender = Column(Integer, default=2, comment="性别")
-    org_id = Column(Integer, ForeignKey(Node.id), comment="部门ID")
-    org = relationship("Node", back_populates="employee")
+    department_id = Column(Integer, ForeignKey(Department.id), comment="部门ID")
+    department = relationship("Department", back_populates="employee")
 
     @property
     def gender(self):
@@ -25,14 +25,18 @@ class Employee(Base):
         self._gender = data
 
     def __repr__(self):
-        return "Employee(id=%r, name=%r, gender=%r, org_id=%r)" % (
-            self.id, self.name, self.gender, self.org_id
+        return "Employee(id=%r, name=%r, gender=%r, department_id=%r)" % (
+            self.id, self.name, self.gender, self.department_id
         )
 
     def dumps(self):
+        """
+        格式化单个员工信息
+        :return: dict
+        """
         data = dict()
         data["id"] = self.id
         data["name"] = self.name
         data["gender"] = self.gender
-        data["org"] = self.org.name
+        data["department"] = self.department.name
         return data

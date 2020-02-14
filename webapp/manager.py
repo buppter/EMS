@@ -4,6 +4,12 @@ from flask_script import Manager
 
 from app.utils.script import Insert, Create, Drop
 
+"""
+可选运行环境：
+"development": Development,
+"test": Testing,
+"production": Production,
+"""
 app = create_app("production")
 
 manager = Manager(app)

@@ -6,6 +6,4 @@ ADD ./requirements.txt /opt/www/webapp/requirements.txt
 
 WORKDIR /opt/www/webapp
 
-EXPOSE 8000
-
 RUN pip install -r requirements.txt
