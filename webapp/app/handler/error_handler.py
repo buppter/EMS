@@ -4,6 +4,10 @@ import traceback
 from app.utils.code import Code
 from app.utils.response import make_response
 
+"""
+自定义error handler
+"""
+
 
 def not_found(e):
     return make_response(code=Code.NOT_FOUND, msg=e.description)

@@ -4,6 +4,10 @@ from werkzeug.exceptions import abort
 
 from app.models.department import Department
 
+"""
+封装一些请求的数据处理方法
+"""
+
 
 def request_args_handler(request):
     page = request.args.get("page", 0)

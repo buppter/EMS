@@ -30,6 +30,10 @@ class Employee(Base):
         )
 
     def dumps(self):
+        """
+        格式化单个员工信息
+        :return: dict
+        """
         data = dict()
         data["id"] = self.id
         data["name"] = self.name

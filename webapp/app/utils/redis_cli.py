@@ -6,7 +6,9 @@ from conf.config import REDIS_KEY_PREFIX
 
 
 class Redis:
-
+    """
+    Redis 客户端以及封装相关的 Redis 命令
+    """
     @staticmethod
     def _get_r():
         REDIS_CONF = current_app.config["REDIS_URL"]

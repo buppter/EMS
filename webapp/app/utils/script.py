@@ -1,5 +1,9 @@
 from flask_script import Command, Option
 
+"""
+flask-script 自定义命令
+"""
+
 
 class Insert(Command):
     """

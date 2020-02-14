@@ -2,6 +2,12 @@ from conf.config import PER_PAGE_NUM
 
 
 def select(table_class, **kwargs):
+    """
+    封装了查询接口，主要是方便query参数的使用
+    :param table_class: 所查询的数据库类
+    :param kwargs: 其他query参数
+    :return:
+    """
     if kwargs:
         if not set(kwargs.keys()).issubset(
                 ('filter', 'first', 'page', 'per_page', 'order_by', 'limit', 'offset', 'exists')):

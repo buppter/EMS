@@ -1,4 +1,7 @@
 class Code:
+    """
+    响应code以及message
+    """
     SUCCESS = 200
     CREATED = 201
     NO_CONTENT = 204
