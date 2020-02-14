@@ -12,19 +12,19 @@
 FileTree
 ├── LICENSE
 ├── README.md
-├── db						# 数据库相关配置
-├── docker-compose.yml		# docker-compose 配置
-├── nginx					# nginx 配置文件
-└── webapp					# Flask 项目主要代码
-    ├── Dockerfile		    # Flask 项目 Dockerfile 
+├── db                    # 数据库相关配置
+├── docker-compose.yml    # docker-compose 配置
+├── nginx                 # nginx 配置文件
+└── webapp                # Flask 项目主要代码
+    ├── Dockerfile        # Flask 项目 Dockerfile 
     ├── __init__.py
-    ├── app					# 包括 routes，models，utils 相关代码
-    ├── conf				# 项目配置
-    ├── manager.py			# 项目入口
-    ├── migrations			# 数据库迁移
-    ├── requirements.txt	# 项目依赖
-    ├── tests				# 单元测试
-    └── uwsgi.ini			# uwsgi 配置
+    ├── app               # 包括 routes，models，utils 相关代码
+    ├── conf              # 项目配置
+    ├── manager.py        # 项目入口
+    ├── migrations        # 数据库迁移
+    ├── requirements.txt  # 项目依赖
+    ├── tests             # 单元测试
+    └── uwsgi.ini         # uwsgi 配置
 ```
 
 ## 下载安装
@@ -87,7 +87,7 @@ FileTree
   uwsgi --ini uwsgi.ini
   ```
 
-  通过访问 `127.0.0.1:8000/v1/departments` 查看返回数据*（**在访问前需先插入数据**）*
+  通过访问 `127.0.0.1:8000/v1/departments` 查看返回数据（**在访问前需先插入数据**）
 
   **2. 通过 `Werkzeug` 启动运行**
 
@@ -96,7 +96,7 @@ FileTree
   python3 manager.py runserver
   ```
 
-  通过访问 `127.0.0.1:5000/v1/departments` 查看返回数据*（**在访问前需先插入数据**）*
+  通过访问 `127.0.0.1:5000/v1/departments` 查看返回数据（**在访问前需先插入数据**）
 
 - 导入Fake数据（可选）
 
