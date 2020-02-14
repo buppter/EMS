@@ -4,6 +4,8 @@ services:
     image: redis:latest
     restart: always
     container_name: redis_db
+    volumes:
+      - ./db/data/redis:/data
 
   mysql:
     image: mysql:5.7
@@ -11,6 +13,7 @@ services:
       - "32000:3306"
     volumes:
       - ./db/init.sql:/data/init.sql
+      - ./db/data/mysql:/var/lib/mysql
     command: --init-file /data/init.sql
     container_name: mysql_db
     environment:
@@ -46,6 +49,6 @@ services:
       - "80:80"
     volumes:
       - ./nginx/ems.conf:/etc/nginx/conf.d/ems.conf
-      - ./webapp/log:/var/log/nginx
+      - ./webapp/log/nginx:/var/log/nginx
     depends_on:
       - web
