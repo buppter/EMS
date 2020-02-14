@@ -36,16 +36,24 @@ class Department(Base):
         root = Department.query.filter(Department.parent_id == None).first_or_404(description="部门数据不存在")
         return root
 
-    def to_dict(self):
+    def dumps(self):
+        """
+        格式化单个部门信息
+        :return: dict
+        """
         department = dict()
         department["id"] = self.id
         department["name"] = self.name
         return department
 
-    def dumps(self):
+    def dumps_all(self):
+        """
+        格式化所有部门信息
+        :return: dict
+        """
         data = dict()
         data["id"] = self.id
         data["name"] = self.name
-        data["subs"] = [c.dumps() for c in self.subordinate.values()] if self.subordinate else []
+        data["subs"] = [c.dumps_all() for c in self.subordinate.values()] if self.subordinate else []
 
         return [data]
