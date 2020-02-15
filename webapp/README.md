@@ -37,27 +37,27 @@
 
 ```json
 {
-	"code": 200,
-	"msg": "success",
-	"data": [
-		{
-			"id": 1,
-			"name": "伏羲实验室",
-			"subs": [
-				{
-					"id": 4,
-					"name": "平台架构组",
-					"subs": [
-						{
-							"id": 7,
-							"name": "数据研发组",
-							"subs": []
-						}
-					]
-				}
-			]
-		}
-	]
+    "code":200,
+    "msg":"success",
+    "data":[
+        {
+            "id":1,
+            "name":"伏羲实验室",
+            "subs":[
+                {
+                    "id":4,
+                    "name":"平台架构组",
+                    "subs":[
+                        {
+                            "id":7,
+                            "name":"数据研发组",
+                            "subs":[]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
 }
 ```
 
@@ -92,17 +92,17 @@
 
 ```json
 {
-	"code": 201,
-	"msg": "created",
-	"data": {
-		"id": 11,
-		"name": "前端开发组",
-		"parent": {
-			"id": 4,
-			"name": "平台架构组"
-		},
-		"subs": []
-	}
+    "code":201,
+    "msg":"created",
+    "data":{
+        "id":11,
+        "name":"前端开发组",
+        "parent":{
+            "id":4,
+            "name":"平台架构组"
+        },
+        "subs":[]
+    }
 }
 ```
 
@@ -134,17 +134,17 @@
 
 ```json
 {
-	"code": 200,
-	"msg": "success",
-	"data": {
-		"id": 11,
-		"name": "前端开发组",
-		"parent": {
-			"id": 4,
-			"name": "平台架构组"
-		},
-		"subs": []
-	}
+    "code":200,
+    "msg":"success",
+    "data":{
+        "id":11,
+        "name":"前端开发组",
+        "parent":{
+            "id":4,
+            "name":"平台架构组"
+        },
+        "subs":[]
+    }
 }
 ```
 
@@ -178,17 +178,17 @@
 
 ```json
 {
-	"code": 200,
-	"msg": "success",
-	"data": {
-		"id": 11,
-		"name": "测试组",
-		"parent": {
-			"id": 4,
-			"name": "平台架构组"
-		},
-		"subs": []
-	}
+    "code":200,
+    "msg":"success",
+    "data":{
+        "id":11,
+        "name":"测试组",
+        "parent":{
+            "id":4,
+            "name":"平台架构组"
+        },
+        "subs":[]
+    }
 }
 ```
 
@@ -220,9 +220,9 @@
 
 ```json
 {
-	"code": 200,
-	"msg": "success",
-	"data": []
+    "code":200,
+    "msg":"success",
+    "data":[]
 }
 ```
 
@@ -254,12 +254,12 @@
 
 ```json
 {
-	"code": 200,
-	"msg": "success",
-	"data": {
-		"id": 9,
-		"name": "丹炉组"
-	}
+    "code":200,
+    "msg":"success",
+    "data":{
+        "id":9,
+        "name":"丹炉组"
+    }
 }
 ```
 
@@ -296,18 +296,18 @@
 
 ```json
 {
-	"code": 200,
-	"msg": "success",
-	"data": [
-		{
-			"id": 7,
-			"name": "数据研发组"
-		},
-		{
-			"id": 8,
-			"name": "web开发组"
-		}
-	]
+    "code":200,
+    "msg":"success",
+    "data":[
+        {
+            "id":7,
+            "name":"数据研发组"
+        },
+        {
+            "id":8,
+            "name":"web开发组"
+        }
+    ]
 }
 ```
 
@@ -344,18 +344,18 @@
 
 ```json
 {
-	"code": 200,
-	"msg": "success",
-	"data": [
-		{
-			"id": 7,
-			"name": "数据研发组"
-		},
-		{
-			"id": 8,
-			"name": "web开发组"
-		}
-	]
+    "code":200,
+    "msg":"success",
+    "data":[
+        {
+            "id":7,
+            "name":"数据研发组"
+        },
+        {
+            "id":8,
+            "name":"web开发组"
+        }
+    ]
 }
 ```
 
@@ -394,22 +394,22 @@
 
 ```json
 {
-	"code": 200,
-	"msg": "success",
-	"data": [
-		{
-			"id": 1,
-			"name": "赵明",
-			"gender": "男",
-			"department": "数据研发组"
-		},
-		{
-			"id": 2,
-			"name": "马宁",
-			"gender": "男",
-			"department": "数据研发组"
-		}
-	]
+    "code":200,
+    "msg":"success",
+    "data":[
+        {
+            "id":1,
+            "name":"赵明",
+            "gender":"男",
+            "department":"数据研发组"
+        },
+        {
+            "id":2,
+            "name":"马宁",
+            "gender":"男",
+            "department":"数据研发组"
+        }
+    ]
 }
 ```
 
@@ -435,22 +435,22 @@
 
 示例：
 
-```
-/employees/1
+```json
+{"name":"张三", "gender":"男", "department":"前端开发组"}
 ```
 
 #### 成功响应示例
 
 ```json
 {
-	"code": 200,
-	"msg": "success",
-	"data": {
-		"id": 1,
-		"name": "赵明",
-		"gender": "男",
-		"department": "数据研发组"
-	}
+    "code":201,
+    "msg":"created",
+    "data":{
+        "id":22,
+        "name":"张三",
+        "gender":"男",
+        "department":"前端开发组"
+    }
 }
 ```
 
@@ -464,7 +464,7 @@
 
 #### 请求方式
 
-`PUT`
+`GET`
 
 #### 请求参数
 
@@ -482,14 +482,14 @@
 
 ```json
 {
-	"code": 200,
-	"msg": "success",
-	"data": {
-		"id": 22,
-		"name": "张三",
-		"gender": "女",
-		"department": "前端开发组"
-	}
+    "code":200,
+    "msg":"success",
+    "data":{
+        "id":22,
+        "name":"张三",
+        "gender":"男",
+        "department":"前端开发组"
+    }
 }
 ```
 
@@ -524,14 +524,14 @@
 
 ```json
 {
-	"code": 200,
-	"msg": "success",
-	"data": {
-		"id": 22,
-		"name": "张三",
-		"gender": "女",
-		"department": "前端开发组"
-	}
+    "code":200,
+    "msg":"success",
+    "data":{
+        "id":22,
+        "name":"张三",
+        "gender":"女",
+        "department":"前端开发组"
+    }
 }
 ```
 
@@ -563,9 +563,9 @@
 
 ```json
 {
-	"code": 200,
-	"msg": "success",
-	"data": []
+    "code":200,
+    "msg":"success",
+    "data":[]
 }
 ```
 
