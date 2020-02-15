@@ -33,11 +33,15 @@ FileTree
 
 ### 1. 接口支持分页，过滤，偏移
 
-接口支持 query 参数：`page`, `per_page`, `limit`, `offset`, 以及其他具体的过滤参数
+尽可能地符合 RESTful 规范，接口支持 query 参数：`page`, `per_page`, `limit`, `offset`, 以及其他具体的过滤参数。详见 [接口文档](https://github.com/buppter/EMS/blob/master/webapp/README.md)
 
 ### 2. 接口速率限制
 
-利用 `Redis` 以及 `Lua` 根据令牌桶算法来实现接口限速，更加平滑且对于分布式支持友好
+利用 `Redis` 以及 `Lua` 根据令牌桶算法来实现接口限速，使得限速更加平滑且优雅
+
+### 3. 可使用 Docker 部署
+
+提供 `Docker` 部署方案，并利用 `docker-compose` 编排 `MySQL`，`Redis`，`Nginx`，部署运行更加简便快捷
 
 ## 下载安装
 
