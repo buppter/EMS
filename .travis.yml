@@ -7,7 +7,7 @@ notifications:
 
 services:
   - mysql
-  - redis-server
+  - redis
   - docker
 
 before_install:
@@ -16,7 +16,7 @@ before_install:
   - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
 
 cache:
-  - pip
+  pip: true
   directories:
       - $HOME/docker
 
