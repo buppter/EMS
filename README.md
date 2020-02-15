@@ -25,13 +25,25 @@ FileTree
     ├── requirements.txt  # 项目依赖
     ├── tests             # 单元测试
     └── uwsgi.ini         # uwsgi 配置
+    └── wait-for-it.sh    # wait-for 脚本，主要用来等待数据库启动
+
 ```
+
+## 特性
+
+### 1. 接口支持分页，过滤，偏移
+
+接口支持 query 参数：`page`, `per_page`, `limit`, `offset`, 以及其他具体的过滤参数
+
+### 2. 接口速率限制
+
+利用 `Redis` 以及 `Lua` 根据令牌桶算法来实现接口限速，更加平滑且对于分布式支持友好
 
 ## 下载安装
 
 该项目运行方式灵活，可以在 Docker 或本地环境中运行
 
-### Docker 中运行
+### 1. Docker 中运行
 
 *请先安装好 Docker 和 docker-compose*
 
@@ -51,7 +63,7 @@ FileTree
 
 - 访问 `127.0.0.1/v1/departments` 查看返回的数据
 
-### 本地环境运行
+### 2. 本地环境运行
 
 *请先在本地环境中安装好 `MySQL`，`Redis`，`Nginx(可选)`，并创建所需数据库*
 
@@ -117,9 +129,23 @@ FileTree
 
   之后访问 `127.0.0.1/v1/employees` 查看返回数据，域名可在 `ems.conf` 中进行修改。
 
-## 特性
+### 3. 其余配置
 
+*其余配置参数都位于 `webapp/conf/config.py` 中*
 
+#### （1） 接口限速
+
+修改配置文件中的 `LIMIT_MAX_TOKEN` 和 `LIMIT_TOKEN_RATE` 参数，默认为 `10` 。
+
+`LIMIT_MAX_TOKEN` 指令牌桶中最大的 TOKEN 数量，`LIMIT_TOKEN_RATE` 指每秒向令牌桶中添加 TOKEN 的速率，根据需求自行修改。
+
+#### （2）PER_PAGE
+
+当URL中传入 `page` 参数而缺省 `per_page` 参数时，默认每页显示 `20` 条数据。
+
+#### （3）Redis 的 Key 前缀
+
+修改配置文件中 `REDIS_KEY_PREFIX` 参数即可。
 
 ## 接口列表
 

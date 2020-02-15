@@ -27,8 +27,8 @@ TEST_REDIS_URL = {
 ============PROD CONFIG============
 """
 
-PROD__SQLALCHEMY_DATABASE_URI = "mysql://root:123456@{}:3306/ems".format("mysql")
+PROD__SQLALCHEMY_DATABASE_URI = "mysql://root:123456@{}:3306/ems".format("mysql_db")
 PROD_REDIS_URL = {
-    "HOST": "redis",
+    "HOST": "redis_db",
     "PORT": 6379
 }

@@ -77,7 +77,6 @@ class DepartmentTestCase(BaseTest):
         self.assertEqual(res.status_code, 201)
         res = res.json
         self.assertEqual(res["code"], 201)
-        self.assertEqual(res["data"], [])
         self.assertTrue("created" in res["msg"])
         self.clean_redis_data()
 
@@ -109,6 +108,21 @@ class DepartmentTestCase(BaseTest):
         self.assertTrue("success" in res.json["msg"])
         self.clean_redis_data()
 
+    def test_update_exist_name_not_self(self):
+        res = self.client.put("/v1/departments/4", json={"name": "web开发组", "parent": "伏羲实验室"})
+        self.assertEqual(res.status_code, 400)
+        res = res.json
+        self.assertEqual(res["code"], 400)
+        self.assertTrue("已存在" in res["msg"])
+        self.clean_redis_data()
+
+    def test_update_exist_name_is_self(self):
+        res = self.client.put("/v1/departments/8", json={"name": "web开发组", "parent": "强化学习组"})
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.json["code"], 200)
+        self.assertTrue("success" in res.json["msg"])
+        self.clean_redis_data()
+
     def test_delete_wrong_id(self):
         res = self.client.delete("/v1/departments/100")
         self.assertEqual(res.status_code, 404)
@@ -124,46 +138,67 @@ class DepartmentTestCase(BaseTest):
         self.clean_redis_data()
 
     def test_get_exist_department_parent(self):
-        res = self.client.get("/v1/departments/parent/3")
+        res = self.client.get("/v1/departments/3/parent")
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.json["code"], 200)
         self.assertTrue("id" in res.json["data"])
         self.clean_redis_data()
 
     def test_get_not_exist_department_parent(self):
-        res = self.client.get("/v1/departments/parent/100")
+        res = self.client.get("/v1/departments/100/parent")
         self.assertEqual(res.status_code, 404)
         self.assertEqual(res.json["code"], 404)
         self.clean_redis_data()
 
     def test_get_exist_department_sub(self):
-        res = self.client.get("/v1/departments/subs/1")
+        res = self.client.get("/v1/departments/1/subs")
         self.assertEqual(res.status_code, 200)
         self.assertIsInstance(res.json["data"], list)
         self.clean_redis_data()
 
     def test_get_not_exist_department_sub(self):
-        res = self.client.get("/v1/departments/subs/100")
+        res = self.client.get("/v1/departments/100/subs")
         self.assertEqual(res.status_code, 404)
         self.assertEqual(res.json["code"], 404)
         self.clean_redis_data()
 
     def test_get_exist_department_sub_with_queries(self):
-        res = self.client.get("/v1/departments/subs/1?page=1&per_page=1")
+        res = self.client.get("/v1/departments/1/subs?page=1&per_page=1")
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.json["code"], 200)
         self.assertIsInstance(res.json["data"], list)
         self.clean_redis_data()
 
     def test_get_exist_department_sub_with_queries_2(self):
-        res = self.client.get("/v1/departments/subs/1?page=1&per_page=fdd")
+        res = self.client.get("/v1/departments/1/subs?page=1&per_page=fdd")
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.json["code"], 200)
         self.assertIsInstance(res.json["data"], list)
         self.clean_redis_data()
 
     def test_get_exist_department_sub_with_queries_3(self):
-        res = self.client.get("/v1/departments/subs/3?limit=1&offset=3")
+        res = self.client.get("/v1/departments/3/subs?limit=1&offset=3")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.json["code"], 200)
+        self.assertIsInstance(res.json["data"], list)
+        self.clean_redis_data()
+
+    def test_get_exist_department_siblings_without_query(self):
+        res = self.client.get("v1/departments/4/siblings")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.json["code"], 200)
+        self.assertIsInstance(res.json["data"], list)
+        self.clean_redis_data()
+
+    def test_get_exist_department_siblings_without_queries_1(self):
+        res = self.client.get("v1/departments/4/siblings?page=1&per_page=5")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.json["code"], 200)
+        self.assertIsInstance(res.json["data"], list)
+        self.clean_redis_data()
+
+    def test_get_exist_department_siblings_without_queries_2(self):
+        res = self.client.get("v1/departments/4/siblings?offset=2&limit=2")
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.json["code"], 200)
         self.assertIsInstance(res.json["data"], list)

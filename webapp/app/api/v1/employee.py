@@ -4,7 +4,7 @@ from werkzeug.exceptions import abort
 
 from flask import Blueprint, request
 
-from app.handler.request_handler import request_args_handler, employee_data_handler
+from app.handler.request_handler import request_args_handler, employee_request_handler
 from app.models import Employee, Department, db
 from app.utils.code import Code
 from app.utils.rate_limiter import limit_rate
@@ -36,7 +36,8 @@ def employees():
 
         department = request.args.get("department")
         if department:
-            department = Department.query.filter(Department.name == department).first_or_404(description="所查询的department不存在")
+            department = Department.query.filter(Department.name == department).first_or_404(
+                description="所查询的department不存在")
         if department:
             fields.append(Employee.department_id == department.id)
 
@@ -45,51 +46,53 @@ def employees():
             fields.append(Employee.name == name)
             exists = True
 
-        emp_list = select(Employee, filter=fields, page=page, per_page=per_page, limit=limit, offset=offset,
-                          exists=exists)
-        data = [emp.dumps() for emp in emp_list]
+        employees_list = select(Employee, filter=fields, page=page, per_page=per_page, limit=limit, offset=offset,
+                                exists=exists)
+        data = [employee.dumps() for employee in employees_list]
 
         return make_response(data=data)
 
     if request.method == "POST":
-        name, gender, department = employee_data_handler(request)
-        new_emp = Employee(name=name, gender=gender, department_id=department.id)
+        name, gender, department = employee_request_handler(request)
+        new_employee = Employee(name=name, gender=gender, department_id=department.id)
         with db.auto_commit():
-            db.session.add(new_emp)
-        logging.info("create a new employee: %s" % new_emp.dumps())
-        return make_response(code=Code.CREATED)
+            db.session.add(new_employee)
+        logging.info("create a new employee: %s" % new_employee.dumps())
+        return make_response(data=new_employee.dumps(), code=Code.CREATED)
 
 
-@employee_bp.route("/employees/<int:emp_id>", methods=["GET", "PUT", "DELETE"])
+@employee_bp.route("/employees/<int:employee_id>", methods=["GET", "PUT", "DELETE"])
 @limit_rate()
-def single_emp(emp_id):
+def single_emp(employee_id):
     """
     根据员工id获取，更新，删除员工信息
-    :param emp_id: 员工ID
+    :param employee_id: 员工ID
     :return:
     """
-    emp = Employee.query.get_or_404(emp_id, description="所查询的员工ID不存在")
+    employee = Employee.query.get_or_404(employee_id, description="所查询的员工ID不存在")
     if request.method == "GET":
-        return make_response(data=emp.dumps())
+        return make_response(data=employee.dumps())
 
     if request.method == "PUT":
-        name, gender, department = employee_data_handler(request)
-        old_emp = emp
-        emp.name = name
-        emp.gender = gender
-        emp.department_id = department.id
+        name, gender, department = employee_request_handler(request)
+        old_employee_info = employee
+        employee.name = name
+        employee.gender = gender
+        employee.department_id = department.id
 
         try:
             db.session.commit()
         except Exception:
             logging.error(
                 "update employee error, employee info: %s, old employee info: %s. \n traceback error: %s" % (
-                    emp.dumps(), old_emp.dumps(), traceback.format_exc()))
+                    employee.dumps(), old_employee_info.dumps(), traceback.format_exc()))
             abort(500)
-
-        return make_response()
+        logging.info(
+            "update a employee info: %s, before update the employee info: %s" % (
+                employee.dumps(), old_employee_info.dumps()))
+        return make_response(data=employee.dumps())
 
     if request.method == "DELETE":
         with db.auto_commit():
-            db.session.delete(emp)
+            db.session.delete(employee)
         return make_response()

@@ -2,7 +2,7 @@ FROM python:3.6
 
 MAINTAINER BUPPTER shixintian@aliyun.com
 
-ADD ./requirements.txt /opt/www/webapp/requirements.txt
+COPY ./requirements.txt /opt/www/webapp/requirements.txt
 
 WORKDIR /opt/www/webapp
 

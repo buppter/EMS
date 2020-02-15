@@ -36,10 +36,22 @@ class Department(Base):
         root = Department.query.filter(Department.parent_id == None).first_or_404(description="部门数据不存在")
         return root
 
+    def dumps_detail(self):
+        """
+        格式化单个部门信息,包含 parent 和 subs 字段
+        :return: dict
+        """
+        department = dict()
+        department["id"] = self.id
+        department["name"] = self.name
+        department["parent"] = {"id": self.parent_id, "name": self.parent.name} if self.parent else {}
+        department["subs"] = [c.dumps() for c in self.subordinate.values()] if self.subordinate else []
+        return department
+
     def dumps(self):
         """
-        格式化单个部门信息
-        :return: dict
+        格式化单个部门信息，只包括 id 和 name
+        :return:
         """
         department = dict()
         department["id"] = self.id
@@ -56,4 +68,4 @@ class Department(Base):
         data["name"] = self.name
         data["subs"] = [c.dumps_all() for c in self.subordinate.values()] if self.subordinate else []
 
-        return [data]
+        return data
