@@ -435,21 +435,21 @@
 
 示例：
 
-```
-/employees/1
+```json
+{"name":"张三", "gender":"男", "department":"前端开发组"}
 ```
 
 #### 成功响应示例
 
 ```json
 {
-    "code":200,
-    "msg":"success",
+    "code":201,
+    "msg":"created",
     "data":{
-        "id":1,
-        "name":"赵明",
+        "id":22,
+        "name":"张三",
         "gender":"男",
-        "department":"数据研发组"
+        "department":"前端开发组"
     }
 }
 ```
@@ -464,7 +464,7 @@
 
 #### 请求方式
 
-`PUT`
+`GET`
 
 #### 请求参数
 
@@ -487,7 +487,7 @@
     "data":{
         "id":22,
         "name":"张三",
-        "gender":"女",
+        "gender":"男",
         "department":"前端开发组"
     }
 }
