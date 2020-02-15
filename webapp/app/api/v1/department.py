@@ -42,7 +42,7 @@ def single_department(department_id):
         return make_response(data=department.dumps())
 
     if request.method == "PUT":
-        name, parent = department_data_handler(request)
+        name, parent = department_request_handler(request, department)
         old_department_info = department
         department.name = name
         department.parent = parent

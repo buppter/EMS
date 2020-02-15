@@ -109,6 +109,21 @@ class DepartmentTestCase(BaseTest):
         self.assertTrue("success" in res.json["msg"])
         self.clean_redis_data()
 
+    def test_update_exist_name_not_self(self):
+        res = self.client.put("/v1/departments/4", json={"name": "web开发组", "parent": "伏羲实验室"})
+        self.assertEqual(res.status_code, 400)
+        res = res.json
+        self.assertEqual(res["code"], 400)
+        self.assertTrue("已存在" in res["msg"])
+        self.clean_redis_data()
+
+    def test_update_exist_name_is_self(self):
+        res = self.client.put("/v1/departments/8", json={"name": "web开发组", "parent": "强化学习组"})
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.json["code"], 200)
+        self.assertTrue("success" in res.json["msg"])
+        self.clean_redis_data()
+
     def test_delete_wrong_id(self):
         res = self.client.delete("/v1/departments/100")
         self.assertEqual(res.status_code, 404)
