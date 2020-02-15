@@ -18,7 +18,7 @@ before_install:
 cache:
   - pip
   bundler:true
-  - directories:
+  directories:
       - $HOME/docker
 
 before_cache:
