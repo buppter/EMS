@@ -17,7 +17,7 @@ def request_args_handler(request):
     return page, per_page, limit, offset
 
 
-def department_data_handler(request):
+def department_request_handler(request, department=None):
     data = request.get_json()
     if not data:
         logging.warning("data handler warning: 数据格式不正确，应该json格式")
@@ -42,7 +42,7 @@ def department_data_handler(request):
     return name, parent_node
 
 
-def employee_data_handler(request):
+def employee_request_handler(request):
     data = request.get_json()
     if not data:
         logging.warning("data handler warning: 数据格式不正确，应该json格式")
