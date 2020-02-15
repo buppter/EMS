@@ -111,3 +111,21 @@ def get_subs(department_id):
     data = [node.dumps() for node in nodes]
     logging.info("get the subs of department(%s): %s" % (department.dumps(), data))
     return make_response(data=data)
+
+
+@department_bp.route("/departments/<int:department_id>/siblings", methods=["GET"])
+@limit_rate()
+def get_siblings(department_id):
+    """
+    获取部门的兄弟部门
+    :param department_id: 部门ID
+    :return:
+    """
+    page, per_page, limit, offset = request_args_handler(request)
+    department = Department.query.get_or_404(department_id, description="部门ID不存在")
+
+    nodes = select(Department, filter=[Department.parent_id == department.parent_id, Department.id != department.id],
+                   page=page, per_page=per_page, limit=limit, offset=offset)
+    data = [node.dumps() for node in nodes]
+    logging.info("get the siblings of department(%s): %s" % (department.dumps(), data))
+    return make_response(data=data)

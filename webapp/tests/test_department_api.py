@@ -183,6 +183,27 @@ class DepartmentTestCase(BaseTest):
         self.assertIsInstance(res.json["data"], list)
         self.clean_redis_data()
 
+    def test_get_exist_department_siblings_without_query(self):
+        res = self.client.get("v1/departments/4/siblings")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.json["code"], 200)
+        self.assertIsInstance(res.json["data"], list)
+        self.clean_redis_data()
+
+    def test_get_exist_department_siblings_without_queries_1(self):
+        res = self.client.get("v1/departments/4/siblings?page=1&per_page=5")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.json["code"], 200)
+        self.assertIsInstance(res.json["data"], list)
+        self.clean_redis_data()
+
+    def test_get_exist_department_siblings_without_queries_2(self):
+        res = self.client.get("v1/departments/4/siblings?offset=2&limit=2")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.json["code"], 200)
+        self.assertIsInstance(res.json["data"], list)
+        self.clean_redis_data()
+
     def test_query_with_error(self):
         from app.utils.query import select
         from app.models.department import Department
