@@ -25,25 +25,25 @@ def employees():
     if request.method == "GET":
         page, per_page, limit, offset = request_args_handler(request)
 
-        fields = []
+        fields = {}
         exists = False
         gender = request.args.get("gender")
         gender_dic = {"男": 1, "女": 0}
         gender = gender_dic.get(gender)
         if gender is not None:
-            fields.append(Employee._gender == gender)
+            fields.update({"_gender": gender})
             exists = True
 
         department = request.args.get("department")
         if department:
-            department = Department.query.filter(Department.name == department).first_or_404(
+            department = Department.query.filter_by(name=department).first_or_404(
                 description="所查询的department不存在")
         if department:
-            fields.append(Employee.department_id == department.id)
+            fields.update({"department_id": department.id})
 
         name = request.args.get("name")
         if name:
-            fields.append(Employee.name == name)
+            fields.update({"name": name})
             exists = True
 
         employees_list = select(Employee, filter=fields, page=page, per_page=per_page, limit=limit, offset=offset,

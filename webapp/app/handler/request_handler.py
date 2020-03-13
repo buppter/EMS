@@ -29,7 +29,7 @@ def department_request_handler(request, department=None):
         # POST 方法下，如果 name 已存在，则 abort
         # PUT 方法下，如果 PUT 的数据，更新了 name 字段，则需要判断 name 是否已存在
         # 如果更新的对象 name 不变，而更新的是其他信息，这时候不需要判断 name 是都已存在
-        if Department.query.filter(Department.name == name).first():
+        if Department.query.filter_by(name=name).first():
             logging.warning("data handler warning: 该部门已存在")
             abort(400, description="该部门已存在")
 
@@ -37,9 +37,9 @@ def department_request_handler(request, department=None):
     if not (name and parent):
         logging.warning("data handler warning: 数据不完整")
         abort(400, description="请求数据不完整")
-    parent_node = Department.query.filter(Department.name == parent).first_or_400(description="所输入的parent不存在")
+    parent_node = Department.query.filter_by(name=parent).first_or_400(description="所输入的parent不存在")
 
-    return name, parent_node
+    return name, parent_node.id
 
 
 def employee_request_handler(request):
@@ -55,6 +55,6 @@ def employee_request_handler(request):
     if not (name and gender and department):
         logging.warning("data handler warning: 数据不完整")
         abort(400, description="请求数据不完整")
-    department = Department.query.filter(Department.name == department).first_or_400(description="所输入的department不存在")
+    department = Department.query.filter_by(name=department).first_or_400(description="所输入的department不存在")
 
     return name, gender, department

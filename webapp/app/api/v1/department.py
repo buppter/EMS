@@ -23,7 +23,9 @@ def all_node():
     :return:
     """
     node = Department.get_root()
-    data = node.dumps_all()
+    data = {}
+    for i in node:
+        data.update(i.dumps_all())
     logging.info("get all department info: %s" % data)
     return make_response(data=[data])
 
@@ -42,10 +44,10 @@ def single_department(department_id):
         return make_response(data=department.dumps_detail())
 
     if request.method == "PUT":
-        name, parent = department_request_handler(request, department)
+        name, parent_id = department_request_handler(request, department)
         old_department_info = department
         department.name = name
-        department.parent = parent
+        department.parent_id = parent_id
         try:
             db.session.commit()
         except Exception:
@@ -60,7 +62,7 @@ def single_department(department_id):
 
     if request.method == "DELETE":
         with db.auto_commit():
-            db.session.delete(department)
+            department.delete()
         logging.info("delete a department: %s" % department)
         return make_response()
 
@@ -74,8 +76,8 @@ def create_department():
     示例：{"name":"xxx", "parent": "xx"}
     :return:
     """
-    name, parent = department_request_handler(request)
-    new_department = Department(name=name, parent=parent)
+    name, parent_id = department_request_handler(request)
+    new_department = Department(name=name, parent_id=parent_id)
     with db.auto_commit():
         db.session.add(new_department)
     logging.info("create a new department: %s" % new_department.dumps())
@@ -106,7 +108,7 @@ def get_subs(department_id):
     """
     page, per_page, limit, offset = request_args_handler(request)
     department = Department.query.get_or_404(department_id, description="部门ID不存在")
-    nodes = select(Department, filter=[Department.parent_id == department_id], page=page, per_page=per_page,
+    nodes = select(Department, filter={"parent_id": department_id}, page=page, per_page=per_page,
                    limit=limit, offset=offset)
     data = [node.dumps() for node in nodes]
     logging.info("get the subs of department(%s): %s" % (department.dumps(), data))
@@ -124,8 +126,8 @@ def get_siblings(department_id):
     page, per_page, limit, offset = request_args_handler(request)
     department = Department.query.get_or_404(department_id, description="部门ID不存在")
 
-    nodes = select(Department, filter=[Department.parent_id == department.parent_id, Department.id != department.id],
-                   page=page, per_page=per_page, limit=limit, offset=offset)
+    nodes = select(Department, filter=[Department.parent_id == department.parent_id, Department.id != department.id,
+                                       Department.status == 1], page=page, per_page=per_page, limit=limit, offset=offset)
     data = [node.dumps() for node in nodes]
     logging.info("get the siblings of department(%s): %s" % (department.dumps(), data))
     return make_response(data=data)

@@ -216,7 +216,7 @@ class DepartmentTestCase(BaseTest):
         from app.utils.query import select
         from app.models.department import Department
         try:
-            select(Department, filter=[Department.id == 100], first=True)
+            select(Department, filter={"id": 100}, first=True)
         except Exception as e:
             self.assertEqual(e.code, 404)
 
