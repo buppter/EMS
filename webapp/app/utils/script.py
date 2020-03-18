@@ -19,7 +19,7 @@ class Insert(Command):
         ]
 
     def run(self, times):
-        from app.models.insert_data import insert_employee_data, insert_department_data
+        from app.utils.insert_data import insert_employee_data, insert_department_data
         try:
             times = int(times)
         except ValueError:
@@ -33,8 +33,6 @@ class Create(Command):
 
     def run(self):
         from app.models import db
-        from app.models.department import Department
-        from app.models.employee import Employee
         db.drop_all()
         db.create_all()
 

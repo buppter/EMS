@@ -15,8 +15,11 @@ app = create_app("production")
 manager = Manager(app)
 
 manager.add_command("db", MigrateCommand)
+# 插入一些Fake数据
 manager.add_command("insert", Insert())
+# 创建数据库表
 manager.add_command("create", Create())
+# 删除数据库表
 manager.add_command("drop", Drop())
 
 if __name__ == "__main__":

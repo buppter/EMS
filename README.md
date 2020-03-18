@@ -61,7 +61,7 @@ FileTree
 
 - 运行程序
 
-  ```bash
+  ```shell
   docker-compose up --build
   ```
 

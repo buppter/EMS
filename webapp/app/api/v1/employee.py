@@ -4,8 +4,8 @@ from werkzeug.exceptions import abort
 
 from flask import Blueprint, request
 
-from app.handler.request_handler import request_args_handler, employee_request_handler
-from app.models import Employee, Department, db
+from app.handler.request_handler import request_args_handler, employee_request_handler, employees_filed_handler
+from app.models import Employee, db
 from app.utils.code import Code
 from app.utils.rate_limiter import limit_rate
 from app.utils.query import select
@@ -24,28 +24,7 @@ def employees():
     """
     if request.method == "GET":
         page, per_page, limit, offset = request_args_handler(request)
-
-        fields = []
-        exists = False
-        gender = request.args.get("gender")
-        gender_dic = {"男": 1, "女": 0}
-        gender = gender_dic.get(gender)
-        if gender is not None:
-            fields.append(Employee._gender == gender)
-            exists = True
-
-        department = request.args.get("department")
-        if department:
-            department = Department.query.filter(Department.name == department).first_or_404(
-                description="所查询的department不存在")
-        if department:
-            fields.append(Employee.department_id == department.id)
-
-        name = request.args.get("name")
-        if name:
-            fields.append(Employee.name == name)
-            exists = True
-
+        fields, exists = employees_filed_handler(request)
         employees_list = select(Employee, filter=fields, page=page, per_page=per_page, limit=limit, offset=offset,
                                 exists=exists)
         data = [employee.dumps() for employee in employees_list]
@@ -69,7 +48,7 @@ def single_emp(employee_id):
     :param employee_id: 员工ID
     :return:
     """
-    employee = Employee.query.get_or_404(employee_id, description="所查询的员工ID不存在")
+    employee = Employee.query.filter_by(id=employee_id).first_or_404(description="所查询的员工ID不存在")
     if request.method == "GET":
         return make_response(data=employee.dumps())
 
@@ -94,5 +73,5 @@ def single_emp(employee_id):
 
     if request.method == "DELETE":
         with db.auto_commit():
-            db.session.delete(employee)
+            employee.delete()
         return make_response()
