@@ -24,7 +24,7 @@ def select(table_class, **kwargs):
     query_first = kwargs.pop("first", False)
     exists = kwargs.pop("exists", False)
 
-    if isinstance(fields, dict):
+    if isinstance(fields, dict) and fields:
         session = table_class.query.filter_by(**fields)
     elif isinstance(fields, list):
         session = table_class.query.filter(*fields)

@@ -4,8 +4,8 @@ from werkzeug.exceptions import abort
 
 from flask import Blueprint, request
 
-from app.handler.request_handler import request_args_handler, employee_request_handler
-from app.models import Employee, Department, db
+from app.handler.request_handler import request_args_handler, employee_request_handler, employees_filed_handler
+from app.models import Employee, db
 from app.utils.code import Code
 from app.utils.rate_limiter import limit_rate
 from app.utils.query import select
@@ -48,7 +48,7 @@ def single_emp(employee_id):
     :param employee_id: 员工ID
     :return:
     """
-    employee = Employee.query.get_or_404(employee_id, description="所查询的员工ID不存在")
+    employee = Employee.query.filter_by(id=employee_id).first_or_404(description="所查询的员工ID不存在")
     if request.method == "GET":
         return make_response(data=employee.dumps())
 
@@ -73,5 +73,5 @@ def single_emp(employee_id):
 
     if request.method == "DELETE":
         with db.auto_commit():
-            db.session.delete(employee)
+            employee.delete()
         return make_response()
