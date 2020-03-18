@@ -20,18 +20,10 @@ class Department(Base):
         self.name = name
         self.parent = parent
 
-    def __repr__(self):
-        return "Department(name=%r, id=%r, parent_id=%r)" % (
-            self.name,
-            self.id,
-            self.parent_id,
-        )
-
     @staticmethod
     def get_root():
         """
         返回根节点
-        todo:存在多个parent_id为空的情况如何判断
         """
         root = Department.query.filter(Department.parent_id == None).first_or_404(description="部门数据不存在")
         return root

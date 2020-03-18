@@ -4,8 +4,8 @@ from werkzeug.exceptions import abort
 
 from flask import Blueprint, request
 
-from app.handler.request_handler import request_args_handler, employee_request_handler
-from app.models import Employee, Department, db
+from app.handler.request_handler import request_args_handler, employee_request_handler, employees_filed_handler
+from app.models import Employee, db
 from app.utils.code import Code
 from app.utils.rate_limiter import limit_rate
 from app.utils.query import select
@@ -25,26 +25,7 @@ def employees():
     if request.method == "GET":
         page, per_page, limit, offset = request_args_handler(request)
 
-        fields = []
-        exists = False
-        gender = request.args.get("gender")
-        gender_dic = {"男": 1, "女": 0}
-        gender = gender_dic.get(gender)
-        if gender is not None:
-            fields.append(Employee._gender == gender)
-            exists = True
-
-        department = request.args.get("department")
-        if department:
-            department = Department.query.filter(Department.name == department).first_or_404(
-                description="所查询的department不存在")
-        if department:
-            fields.append(Employee.department_id == department.id)
-
-        name = request.args.get("name")
-        if name:
-            fields.append(Employee.name == name)
-            exists = True
+        fields, exists = employees_filed_handler(request)
 
         employees_list = select(Employee, filter=fields, page=page, per_page=per_page, limit=limit, offset=offset,
                                 exists=exists)

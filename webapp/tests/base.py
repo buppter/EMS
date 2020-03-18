@@ -5,7 +5,7 @@ sys.path.append("../")
 
 from app import create_app
 from app.models import db
-from app.models.insert_data import insert_department_data, insert_employee_data
+from app.utils.insert_data import insert_department_data, insert_employee_data
 
 
 class BaseTest(unittest.TestCase):

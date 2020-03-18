@@ -2,7 +2,9 @@ import logging
 
 from werkzeug.exceptions import abort
 
+from app.models import Employee
 from app.models.department import Department
+from app.utils.gender import gender_to_num
 
 """
 封装一些请求的数据处理方法
@@ -58,3 +60,27 @@ def employee_request_handler(request):
     department = Department.query.filter(Department.name == department).first_or_400(description="所输入的department不存在")
 
     return name, gender, department
+
+
+def employees_filed_handler(request):
+    fields = []
+    exists = False
+    gender = request.args.get("gender")
+    gender = gender_to_num(gender) if gender else None
+    if gender is not None:
+        fields.append(Employee._gender == gender)
+        exists = True
+
+    department = request.args.get("department")
+    if department:
+        department = Department.query.filter(Department.name == department).first_or_404(
+            description="所查询的department不存在")
+    if department:
+        fields.append(Employee.department_id == department.id)
+
+    name = request.args.get("name")
+    if name:
+        fields.append(Employee.name == name)
+        exists = True
+
+    return fields, exists
