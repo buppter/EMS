@@ -35,7 +35,7 @@ class Department(Base):
         department_detail["subs"] = [node.dumps() for node in sub_nodes_list] if sub_nodes_list else []
         return department_detail
 
-    def dumps(self):
+    def dumps(self) -> dict:
         """
         格式化单个部门信息，只包括 id 和 name
         :return:
@@ -45,7 +45,11 @@ class Department(Base):
         department["name"] = self.name
         return department
 
-    def get_subs(self):
+    def get_subs(self) -> list:
+        """
+        获取节点的子节点
+        :return:
+        """
         sub_nodes_list = Department.query.filter_by(parent_id=self.id).all()
         return sub_nodes_list
 
