@@ -22,11 +22,6 @@ class Employee(Base):
         data = gender_dic.get(value, 2)
         self._gender = data
 
-    def __repr__(self):
-        return "Employee(id=%r, name=%r, gender=%r, department_id=%r)" % (
-            self.id, self.name, self.gender, self.department_id
-        )
-
     def dumps(self):
         """
         格式化单个员工信息
